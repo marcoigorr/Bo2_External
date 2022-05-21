@@ -6,49 +6,47 @@
 #include "proc.h"
 
 
-
-
 int main()
 {
+	/* ------------------- Process ------------------- */
 	DWORD procId = GetProcId(L"t6zm - Zombies Offline.exe");
-	std::cout << "Process ID of \"t6zm - Zombies Offline.exe\" -> " << procId << std::endl;
 
-	uintptr_t modBaseAddr = GetModuleBaseAddress(procId, L"t6zm - Zombies Offline.exe");	
-	std::cout << "Module Base address -> " << "0x400000" << std::endl << std::endl;
+	DWORD_PTR modBaseAddr = GetModuleBaseAddress64(procId);
 
-	// Get Handle to process
 	HANDLE hProcess = 0;
 	hProcess = OpenProcess(PROCESS_ALL_ACCESS, NULL, procId);
 
-	// Resolving base addresses
-	uintptr_t dynamicPtrBaseAddr = 0x400000 + 0x01D88290;
-	std::cout << "Dynamic Pointer Base address: " << "0x400000" << " + 0x01D88290 = " << std::dec << "0x" << std::hex << dynamicPtrBaseAddr << std::endl << std::endl;
-	
-	// Resolve values
-	uintptr_t entityAddr = 0x0;
-	ReadProcessMemory(hProcess, (BYTE*)dynamicPtrBaseAddr, &entityAddr, sizeof(entityAddr), nullptr);
-	std::cout << "Player entity obj addr -> " << entityAddr << std::endl;
-	
-	std::vector<unsigned int> ammoOffset = { 0x42C };
-	uintptr_t ammoAddr = FindDMAAddy(hProcess, dynamicPtrBaseAddr, ammoOffset);
+	uintptr_t dynamicPtrBaseAddr = modBaseAddr + 0x01D88290;
 
-	std::cout << "Ammo address = " << "0x" << std::hex << ammoAddr << std::endl;
+	// Process Info
+	std::cout << "Process ID of \"t6zm - Zombies Offline.exe\" -> " << std::dec << procId << std::endl;
+	std::cout << "Module Base addr -> " << "0x" << std::hex << modBaseAddr << std::endl;
+	std::cout << "Dynamic Pointer Base addr -> " << "0x" << std::hex << dynamicPtrBaseAddr << std::endl << std::endl;
 
-	// Read values
+	/* ------------------- Entity ------------------- */
+
+	// Resolving Entity Object Base addr
+	uintptr_t playerAddr = 0x0;
+	ReadProcessMemory(hProcess, (BYTE*)dynamicPtrBaseAddr, &playerAddr, sizeof(playerAddr), NULL);
+	std::cout << "Player Object addr = " << "0x" << std::hex << playerAddr << std::endl;
+
+	// Primary Ammo
+	std::vector<unsigned int> ammoOffsets = { 0x42C };
+	uintptr_t ammoAddr = FindDMAAddy(hProcess, dynamicPtrBaseAddr, ammoOffsets);
+	std::cout << "Ammo addr = " << "0x" << std::hex << ammoAddr << std::endl;
+
 	int ammoValue = 0;
+	ReadProcessMemory(hProcess, (BYTE*)ammoAddr, &ammoValue, sizeof(ammoValue), NULL);
+	std::cout << "Ammo value = " << std::dec << ammoValue << std::endl;
 
-	ReadProcessMemory(hProcess, (BYTE*)ammoAddr, &ammoValue, sizeof(ammoValue), nullptr);
-	std::cout << "Current ammo = " << std::dec << ammoValue << std::endl;
+	int newAmmoValue = 420;
+	WriteProcessMemory(hProcess, (BYTE*)ammoAddr, &newAmmoValue, sizeof(newAmmoValue), NULL);
 
-	// Writing to memory
-	int newAmmo = 420;
-	WriteProcessMemory(hProcess, (BYTE*)ammoAddr, &newAmmo, sizeof(newAmmo), nullptr);
-
-	// Reading out
-	ReadProcessMemory(hProcess, (BYTE*)ammoAddr, &ammoValue, sizeof(ammoValue), nullptr);
-
+	ReadProcessMemory(hProcess, (BYTE*)ammoAddr, &ammoValue, sizeof(ammoValue), NULL);
 	std::cout << "New ammo = " << std::dec << ammoValue << std::endl;
 
-	getchar();
+	// Wait 
+	int x;
+	std::cin >> x;
 	return 0;
 }
