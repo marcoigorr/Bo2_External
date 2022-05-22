@@ -108,3 +108,30 @@ uintptr_t FindDMAAddy(HANDLE hProc, uintptr_t ptr, std::vector<unsigned int> off
 	}
 	return addr;
 }
+
+void WriteToMemory(
+	HANDLE hProcess, 
+	uintptr_t playerPtrBase, 
+	bool bHealth,
+	bool bAmmo, 
+	uintptr_t healthAddr,
+	uintptr_t primaryAmmoAddr, 
+	uintptr_t secondaryAmmoAddr	
+	)
+	{
+
+	if (bAmmo)
+	{
+		//Write to memory ammo
+		int newAmmo = 420;
+		WriteProcessMemory(hProcess, (BYTE*)primaryAmmoAddr, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)secondaryAmmoAddr, &newAmmo, sizeof(newAmmo), nullptr);
+	}
+	if (bHealth)
+	{
+		//Write to memory health
+		int newHealth = 420;
+		WriteProcessMemory(hProcess, (BYTE*)healthAddr, &newHealth, sizeof(newHealth), nullptr);
+
+	}
+}
