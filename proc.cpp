@@ -2,73 +2,53 @@
 #include "proc.h"
 
 
-// Process ID is a DWORD type var
 DWORD GetProcId(const wchar_t* procName)
 {
 	DWORD procId = 0;
-	HANDLE hSnap = (CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)); // Get a handle to the snapshot of all the current processes running
+
+	// Get Process snapshot
+	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 
 	if (hSnap != INVALID_HANDLE_VALUE)
 	{
-		PROCESSENTRY32 procEntry; // The pointer to a processentry structure that contains process informations
+		// Struct that contains process information
+		PROCESSENTRY32 procEntry;
+		procEntry.dwSize = sizeof(PROCESSENTRY32);
 
-		procEntry.dwSize = sizeof(procEntry); // Setting the size of the structure, in bytes. Process32First fails otherwise
-
-		if (Process32First(hSnap, &procEntry)) // Returns TRUE if the first entry of the process list has been copied to the buffer or FALSE otherwise
+		if (!Process32First(hSnap, &procEntry))
 		{
-			while (Process32Next(hSnap, &procEntry)) // Returns TRUE if the next entry of the process list has been copied to the buffer or FALSE otherwise
+			std::cout << "Failed to retrieve information about the first process." << std::endl;
+			return procId;
+		}
+
+		while (Process32Next(hSnap, &procEntry))
+		{
+			std::wcout << "\nProcess " << procEntry.th32ProcessID << ": " << procEntry.szExeFile;
+
+			if (!_wcsicmp(procEntry.szExeFile, procName))
 			{
-				if (!_wcsicmp(procEntry.szExeFile, procName)) // Returns 0 if procName is equal to the iterated process
-				{
-					procId = procEntry.th32ProcessID;
-					break;
-				}
+				std::cout << " <- Process Found!" << std::endl;
+				procId = procEntry.th32ProcessID;
+				break;
 			}
 		}
 	}
-
+	Sleep(500);
 	CloseHandle(hSnap);
 	return procId;
-}
-
-// Same thing, just for modules in the process
-uintptr_t GetModuleBaseAddress(DWORD procId, const wchar_t* modName)
-{
-	uintptr_t modBaseAddr = 0;
-	HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, procId);
-
-	if (hSnap != INVALID_HANDLE_VALUE)
-	{
-		MODULEENTRY32 modEntry;
-		modEntry.dwSize = sizeof(modEntry);
-
-		if (Module32First(hSnap, &modEntry))
-		{
-			while (Module32Next(hSnap, &modEntry))
-			{
-				if (!_wcsicmp(modEntry.szModule, modName))
-				{
-					modBaseAddr = (uintptr_t)modEntry.modBaseAddr;
-					break;
-				}
-			}
-		}
-	}
-	CloseHandle(hSnap);
-	return modBaseAddr;
 }
 
 DWORD_PTR GetModuleBaseAddress64(DWORD processID)
 {
 	DWORD_PTR   baseAddress = 0;
-	HANDLE      processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processID);
+	HANDLE      hProc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processID);
 	HMODULE*	moduleArray;
 	LPBYTE      moduleArrayBytes;
 	DWORD       bytesRequired;
 
-	if (processHandle)
+	if (hProc)
 	{
-		if (EnumProcessModules(processHandle, NULL, 0, &bytesRequired))
+		if (EnumProcessModules(hProc, NULL, 0, &bytesRequired))
 		{
 			if (bytesRequired)
 			{
@@ -81,7 +61,7 @@ DWORD_PTR GetModuleBaseAddress64(DWORD processID)
 					moduleCount = bytesRequired / sizeof(HMODULE);
 					moduleArray = (HMODULE*)moduleArrayBytes;
 
-					if (EnumProcessModules(processHandle, moduleArray, bytesRequired, &bytesRequired))
+					if (EnumProcessModules(hProc, moduleArray, bytesRequired, &bytesRequired))
 					{
 						baseAddress = (DWORD_PTR)moduleArray[0];
 					}
@@ -91,7 +71,7 @@ DWORD_PTR GetModuleBaseAddress64(DWORD processID)
 			}
 		}
 
-		CloseHandle(processHandle);
+		CloseHandle(hProc);
 	}
 
 	return baseAddress;
