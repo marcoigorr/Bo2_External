@@ -91,6 +91,7 @@ uintptr_t FindDMAAddy(HANDLE hProc, uintptr_t ptr, std::vector<unsigned int> off
 
 void WriteToMemory(
 	HANDLE hProcess, 
+	uintptr_t moduleBaseAddr,
 	uintptr_t playerPtrBase, 
 	bool bHealth,
 	bool bAmmo, 
@@ -107,13 +108,15 @@ void WriteToMemory(
 		WriteProcessMemory(hProcess, (BYTE*)primaryAmmoAddr, &newAmmo, sizeof(newAmmo), nullptr);
 		WriteProcessMemory(hProcess, (BYTE*)secondaryAmmoAddr, &newAmmo, sizeof(newAmmo), nullptr);
 	}
+
 	if (bHealth)
 	{
-		//Write to memory health
-		int newHealth = 420;
-		// t6zm - Zombies Offline.exe+429E69 - 01 B7 A8010000 - sub [edi+000001A8],esi
-		// change with add
-		WriteProcessMemory(hProcess, (BYTE*)healthAddr, &newHealth, sizeof(newHealth), nullptr);
-
+		// 01 B7 A8010000 = add [edi+000001A8],esi
+		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x429E69), (BYTE*)("\x01\xB7\xA8\x01\x00\x00"), 6, hProcess);
+	}
+	else
+	{
+		// 29 B7 A8010000 = sub [edi+000001A8],esi     
+		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x429E69), (BYTE*)("\x29\xB7\xA8\x01\x00\x00"), 6, hProcess);
 	}
 }

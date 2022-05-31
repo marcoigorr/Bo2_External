@@ -173,7 +173,7 @@ int main()
 			WriteProcessMemory(hProcess, (BYTE*)grenadesSecAddr, &grenadesSecValue, sizeof(grenadesSecValue), NULL);
 		}
 
-		WriteToMemory(hProcess, localPlayerPtr, bHealth, bAmmo, healthAddr, primaryAmmoAddr, secondaryAmmoAddr);
+		WriteToMemory(hProcess, moduleBaseAddr, localPlayerPtr, bHealth, bAmmo, healthAddr, primaryAmmoAddr, secondaryAmmoAddr);
 	}
 
 
