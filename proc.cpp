@@ -111,6 +111,8 @@ void WriteToMemory(
 	{
 		//Write to memory health
 		int newHealth = 420;
+		// t6zm - Zombies Offline.exe+429E69 - 01 B7 A8010000 - sub [edi+000001A8],esi
+		// change with add
 		WriteProcessMemory(hProcess, (BYTE*)healthAddr, &newHealth, sizeof(newHealth), nullptr);
 
 	}
