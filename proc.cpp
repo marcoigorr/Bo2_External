@@ -95,6 +95,7 @@ void WriteToMemory(
 	uintptr_t playerPtrBase, 
 	bool bHealth,
 	bool bAmmo, 
+	bool bFireRate,
 	uintptr_t healthAddr,
 	uintptr_t primaryAmmoAddr, 
 	uintptr_t secondaryAmmoAddr	
@@ -118,5 +119,16 @@ void WriteToMemory(
 	{
 		// 29 B7 A8010000 = sub [edi+000001A8],esi     
 		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x429E69), (BYTE*)("\x29\xB7\xA8\x01\x00\x00"), 6, hProcess);
+	}
+
+	if (bFireRate)
+	{
+		// 90 = nop
+		mem::NopEx((BYTE*)(moduleBaseAddr + 0x54B4BD), 2, hProcess);
+	}
+	else
+	{
+		// 89 13 = mov [ebx],edx
+		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x54B4BD), (BYTE*)("\x89\x13"), 2, hProcess);
 	}
 }

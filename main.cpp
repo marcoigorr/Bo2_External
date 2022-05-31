@@ -13,13 +13,14 @@ int main()
 	std::string nameValue = "Game Name Here";
 	int healthValue, healthMaxValue, pointsValue, primaryAmmoValue, primaryMagValue, secondaryAmmoValue, secondaryMagValue, grenadesValue, grenadesSecValue;
 
-	bool bHealth = false, bAmmo = false;
+	bool bHealth = false, bAmmo = false, bFireRate = false;
 
 	// For console output
 	bool UpdateOnNextRun = true;
 	int timeSinceLastUpdate = clock();
 	std::string sAmmoStatus = "OFF";
 	std::string sHealthStatus = "OFF";
+	std::string sFireRateStatus = "OFF";
 
 	// Offsets
 	std::vector<unsigned int> nameOffset = { 0x5534 };
@@ -91,9 +92,10 @@ int main()
 			std::cout << "----------------------------------------------------------------------" << std::endl << std::endl;
 			std::cout << "\t[F1] God Mode -> " << sHealthStatus << std::endl;
 			std::cout << "\t[F2] Unlimited Ammo -> " << sAmmoStatus << std::endl;
-			std::cout << "\t[F3] Add 500 points " << std::endl;
-			std::cout << "\t[F4] Add a Grenade " << std::endl;
-			std::cout << "\t[F5] Add a Grenade (second slot) " << std::endl;
+			std::cout << "\t[F3] Fire Rate Hack -> " << sFireRateStatus << std::endl;
+			std::cout << "\t[F4] Add 500 points " << std::endl;
+			std::cout << "\t[F5] Add a Grenade " << std::endl;
+			std::cout << "\t[F6] Add a Grenade (second slot) " << std::endl;
 			std::cout << "\n--------------------------------- INFO -----------------------------\n" << std::endl;
 
 			std::cout << "  Module Base Addr -> " << "0x" << std::hex << moduleBaseAddr << std::endl;
@@ -135,7 +137,7 @@ int main()
 			}
 		}
 
-		// Primary Ammo
+		// Ammo
 		if (GetAsyncKeyState(VK_F2) & 1)
 		{
 			UpdateOnNextRun = true;
@@ -151,29 +153,48 @@ int main()
 			}
 		}
 
-		// Points
+		// Fire Rate
 		if (GetAsyncKeyState(VK_F3) & 1)
+		{
+			UpdateOnNextRun = true;
+
+			bFireRate = !bFireRate;
+			if (bFireRate)
+			{
+				sFireRateStatus = "ON";
+			}
+			else
+			{
+				sFireRateStatus = "OFF";
+			}
+
+		}
+
+		// Points
+		if (GetAsyncKeyState(VK_F4) & 1)
 		{
 			UpdateOnNextRun = true;
 			pointsValue += 500;
 			WriteProcessMemory(hProcess, (BYTE*)pointsAddr, &pointsValue, sizeof(pointsValue), NULL);
 		}
 
-		if (GetAsyncKeyState(VK_F4) & 1)
+		// Primary Grenade +1
+		if (GetAsyncKeyState(VK_F5) & 1)
 		{
 			UpdateOnNextRun = true;
 			grenadesValue += 1;
 			WriteProcessMemory(hProcess, (BYTE*)grenadesAddr, &grenadesValue, sizeof(grenadesValue), NULL);
 		}
 
-		if (GetAsyncKeyState(VK_F5) & 1)
+		// Secondary Grenade +1
+		if (GetAsyncKeyState(VK_F6) & 1)
 		{
 			UpdateOnNextRun = true;
 			grenadesSecValue += 1;
 			WriteProcessMemory(hProcess, (BYTE*)grenadesSecAddr, &grenadesSecValue, sizeof(grenadesSecValue), NULL);
 		}
 
-		WriteToMemory(hProcess, moduleBaseAddr, localPlayerPtr, bHealth, bAmmo, healthAddr, primaryAmmoAddr, secondaryAmmoAddr);
+		WriteToMemory(hProcess, moduleBaseAddr, localPlayerPtr, bHealth, bAmmo, bFireRate, healthAddr, primaryAmmoAddr, secondaryAmmoAddr);
 	}
 
 

@@ -17,6 +17,7 @@ void WriteToMemory(
 	uintptr_t playerPtrBase,
 	bool bHealth,
 	bool bAmmo,
+	bool bFireRate,
 	uintptr_t healthAddr,
 	uintptr_t primaryAmmoAddr,
 	uintptr_t secondaryAmmoAddr
