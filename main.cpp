@@ -14,10 +14,10 @@ int main()
 {
 	HANDLE hProcess = 0;
 	uintptr_t moduleBaseAddr, localPlayerPtr, localPlayerPtrSuper;
-	uintptr_t nameAddr, healthAddr, healthMaxAddr, pointsAddr, primaryAmmoAddr, primaryAmmoSecondAddr, primaryMagAddr, secondaryAmmoAddr, secondaryAmmoSecondAddr, secondaryMagAddr, grenadesAddr, grenadesSecAddr;
+	uintptr_t nameAddr, healthAddr, healthMaxAddr, pointsAddr, primaryMagAddr, secondaryMagAddr, ammo1Addr, ammo2Addr, ammo3Addr, ammo4Addr, ammo5Addr, grenadesAddr;
 	uintptr_t crossHairAddr;
 	std::string nameValue = "Game Name Here";
-	int healthValue, healthMaxValue, pointsValue, primaryAmmoValue, primaryAmmoSecondValue , primaryMagValue, secondaryAmmoValue, secondaryAmmoSecondValue, secondaryMagValue, grenadesValue, grenadesSecValue;
+	int healthValue, healthMaxValue, pointsValue, primaryMagValue, secondaryMagValue, ammo1Value, ammo2Value, ammo3Value, ammo4Value, ammo5Value, grenadesValue;
 	int crossHairValue;
 
 	bool bHealth = false, bAmmo = false, bFireRate = false, bRecoil = false;
@@ -35,14 +35,17 @@ int main()
 	std::vector<unsigned int> healthOffset = { 0x1A8 };
 	std::vector<unsigned int> healthMaxOffset = { 0x1AC };
 	std::vector<unsigned int> pointsOffset = { 0x55C8 };
-	std::vector<unsigned int> primaryAmmoOffset = { 0x42C };
-	std::vector<unsigned int> primaryAmmoSecondOffset = { 0x43C };
+
 	std::vector<unsigned int> primaryMagOffset = { 0x3F0 };
-	std::vector<unsigned int> secondaryAmmoOffset = { 0x434 };
-	std::vector<unsigned int> secondaryAmmoSecondOffset = { 0x440 };
 	std::vector<unsigned int> secondaryMagOffset = { 0x3F8 };
+	std::vector<unsigned int> ammo1Offset = { 0x42C };
+	std::vector<unsigned int> ammo2Offset = { 0x43C };
+	std::vector<unsigned int> ammo3Offset = { 0x434 };
+	std::vector<unsigned int> ammo4Offset = { 0x440 };
+	std::vector<unsigned int> ammo5Offset = { 0x438 };
+
 	std::vector<unsigned int> grenadesOffset = { 0x430 };
-	std::vector<unsigned int> grenadesSecOffset = { 0x438 };
+	
 	std::vector<unsigned int> crossHairOffset = { 0x588 };
 
 	// Get process ID
@@ -61,14 +64,14 @@ int main()
 		healthAddr = FindDMAAddy(hProcess, localPlayerPtrSuper, healthOffset);
 		healthMaxAddr = FindDMAAddy(hProcess, localPlayerPtrSuper, healthMaxOffset);
 		pointsAddr = FindDMAAddy(hProcess, localPlayerPtr, pointsOffset);
-		primaryAmmoAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryAmmoOffset);
-		primaryAmmoSecondAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryAmmoSecondOffset);
 		primaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryMagOffset);
-		secondaryAmmoAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryAmmoOffset);
-		secondaryAmmoSecondAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryAmmoSecondOffset);
 		secondaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryMagOffset);
+		ammo1Addr = FindDMAAddy(hProcess, localPlayerPtr, ammo1Offset);
+		ammo2Addr = FindDMAAddy(hProcess, localPlayerPtr, ammo2Offset);
+		ammo3Addr = FindDMAAddy(hProcess, localPlayerPtr, ammo3Offset);
+		ammo4Addr = FindDMAAddy(hProcess, localPlayerPtr, ammo4Offset);
+		ammo5Addr = FindDMAAddy(hProcess, localPlayerPtr, ammo5Offset);
 		grenadesAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesOffset);
-		grenadesSecAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesSecOffset);
 		crossHairAddr = FindDMAAddy(hProcess, localPlayerPtr, crossHairOffset);
 
 	}
@@ -92,15 +95,17 @@ int main()
 			ReadProcessMemory(hProcess, (BYTE*)healthMaxAddr, &healthMaxValue, sizeof(healthMaxValue), NULL);
 			// Points
 			ReadProcessMemory(hProcess, (BYTE*)pointsAddr, &pointsValue, sizeof(pointsValue), NULL);
-			// Primary Weapon
-			ReadProcessMemory(hProcess, (BYTE*)primaryAmmoAddr, &primaryAmmoValue, sizeof(primaryAmmoValue), NULL);
+			// Weapons
 			ReadProcessMemory(hProcess, (BYTE*)primaryMagAddr, &primaryMagValue, sizeof(primaryMagValue), NULL);
-			// Secondary Weapon
-			ReadProcessMemory(hProcess, (BYTE*)secondaryAmmoAddr, &secondaryAmmoValue, sizeof(secondaryAmmoValue), NULL);
 			ReadProcessMemory(hProcess, (BYTE*)secondaryMagAddr, &secondaryMagValue, sizeof(secondaryMagValue), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)ammo1Addr, &ammo1Value, sizeof(ammo1Value), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)ammo2Addr, &ammo2Value, sizeof(ammo2Value), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)ammo3Addr, &ammo3Value, sizeof(ammo3Value), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)ammo4Addr, &ammo4Value, sizeof(ammo4Value), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)ammo5Addr, &ammo5Value, sizeof(ammo5Value), NULL);
+
 			// Grenades
 			ReadProcessMemory(hProcess, (BYTE*)grenadesAddr, &grenadesValue, sizeof(grenadesValue), NULL);
-			ReadProcessMemory(hProcess, (BYTE*)grenadesSecAddr, &grenadesSecValue, sizeof(grenadesSecValue), NULL);
 
 			std::cout << "----------------------------------------------------------------------" << std::endl;
 			std::cout << "                     t6zm - Zombies Offline Cheats" << std::endl;
@@ -111,7 +116,6 @@ int main()
 			std::cout << "\t[F4] Not so Recoil  -> " << sRecoilStatus << std::endl;
 			std::cout << "\t[F5] Add 500 points " << std::endl;
 			std::cout << "\t[F6] Add a Grenade " << std::endl;
-			std::cout << "\t[F7] Add a Grenade (second slot) " << std::endl << std::endl;
 
 			std::cout << "\t[F10] Update Addresses " << std::endl;
 			std::cout << "\n--------------------------------- INFO -----------------------------\n" << std::endl;
@@ -120,20 +124,20 @@ int main()
 			std::cout << "  Local player pointer       -> " << "0x" << std::hex << localPlayerPtr << std::endl;
 			std::cout << "  Local player pointer super -> " << "0x" << std::hex << localPlayerPtrSuper << std::endl << std::endl;
 
-
 			std::cout << "  Health         -> " << "0x" << std::hex << healthAddr << "\tValue = " << std::dec << healthValue << std::endl;
 			std::cout << "  Health Max     -> " << "0x" << std::hex << healthMaxAddr << "\tValue = " << std::dec << healthMaxValue << std::endl;
 
 			std::cout << "  Points         -> " << "0x" << std::hex << pointsAddr << "\tValue = " << std::dec << pointsValue << std::endl;
 
-			std::cout << "  Primary Ammo   -> " << "0x" << std::hex << primaryAmmoAddr << "\tValue = " << std::dec << primaryAmmoValue << std::endl;
 			std::cout << "  Primary Mag    -> " << "0x" << std::hex << primaryMagAddr << "\tValue = " << std::dec << primaryMagValue << std::endl;
-
-			std::cout << "  Secondary Ammo -> " << "0x" << std::hex << secondaryAmmoAddr << "\tValue = " << std::dec << secondaryAmmoValue << std::endl;
 			std::cout << "  Secondary Mag  -> " << "0x" << std::hex << secondaryMagAddr << "\tValue = " << std::dec << secondaryMagValue << std::endl;
+			std::cout << "  Ammo 1         -> " << "0x" << std::hex << ammo1Addr << "\tValue = " << std::dec << ammo1Value << std::endl;
+			std::cout << "  Ammo 2         -> " << "0x" << std::hex << ammo2Addr << "\tValue = " << std::dec << ammo2Value << std::endl;
+			std::cout << "  Ammo 3         -> " << "0x" << std::hex << ammo3Addr << "\tValue = " << std::dec << ammo3Value << std::endl;
+			std::cout << "  Ammo 4         -> " << "0x" << std::hex << ammo4Addr << "\tValue = " << std::dec << ammo4Value << std::endl;
+			std::cout << "  Ammo 5         -> " << "0x" << std::hex << ammo5Addr << "\tValue = " << std::dec << ammo5Value << std::endl;
 
 			std::cout << "  Grenades       -> " << "0x" << std::hex << grenadesAddr << "\tValue = " << std::dec << grenadesValue << std::endl;
-			std::cout << "  Grenades 2     -> " << "0x" << std::hex << grenadesSecAddr << "\tValue = " << std::dec << grenadesSecValue << std::endl;
 
 			UpdateOnNextRun = false;
 			timeSinceLastUpdate = clock();
@@ -147,14 +151,14 @@ int main()
 			healthAddr = FindDMAAddy(hProcess, localPlayerPtrSuper, healthOffset);
 			healthMaxAddr = FindDMAAddy(hProcess, localPlayerPtrSuper, healthMaxOffset);
 			pointsAddr = FindDMAAddy(hProcess, localPlayerPtr, pointsOffset);
-			primaryAmmoAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryAmmoOffset);
-			primaryAmmoSecondAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryAmmoSecondOffset);
 			primaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryMagOffset);
-			secondaryAmmoAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryAmmoOffset);
-			secondaryAmmoSecondAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryAmmoSecondOffset);
 			secondaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryMagOffset);
+			ammo1Addr = FindDMAAddy(hProcess, localPlayerPtr, ammo1Offset);
+			ammo2Addr = FindDMAAddy(hProcess, localPlayerPtr, ammo2Offset);
+			ammo3Addr = FindDMAAddy(hProcess, localPlayerPtr, ammo3Offset);
+			ammo4Addr = FindDMAAddy(hProcess, localPlayerPtr, ammo4Offset);
+			ammo5Addr = FindDMAAddy(hProcess, localPlayerPtr, ammo5Offset);
 			grenadesAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesOffset);
-			grenadesSecAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesSecOffset);
 			crossHairAddr = FindDMAAddy(hProcess, localPlayerPtr, crossHairOffset);
 		}
 
@@ -240,15 +244,7 @@ int main()
 			WriteProcessMemory(hProcess, (BYTE*)grenadesAddr, &grenadesValue, sizeof(grenadesValue), NULL);
 		}
 
-		// Secondary Grenade +1
-		if (GetAsyncKeyState(VK_F7) & 1)
-		{
-			UpdateOnNextRun = true;
-			grenadesSecValue += 1;
-			WriteProcessMemory(hProcess, (BYTE*)grenadesSecAddr, &grenadesSecValue, sizeof(grenadesSecValue), NULL);
-		}
-
-		WriteToMemory(hProcess, moduleBaseAddr, localPlayerPtr, bHealth, bAmmo, bFireRate, bRecoil, healthAddr, primaryAmmoAddr, primaryAmmoSecondAddr, secondaryAmmoAddr, secondaryAmmoSecondAddr, crossHairAddr);
+		WriteToMemory(hProcess, moduleBaseAddr, localPlayerPtr, bHealth, bAmmo, bFireRate, bRecoil, healthAddr, ammo1Addr, ammo2Addr, ammo3Addr, ammo4Addr, ammo5Addr, crossHairAddr);
 	}
 
 	system("cls");

@@ -98,10 +98,11 @@ void WriteToMemory(
 	bool bFireRate,
 	bool bRecoil,
 	uintptr_t healthAddr,
-	uintptr_t primaryAmmoAddr, 
-	uintptr_t primaryAmmoSecondAddr,
-	uintptr_t secondaryAmmoAddr,
-	uintptr_t secondaryAmmoSecondAddr,
+	uintptr_t ammo1Addr, 
+	uintptr_t ammo2Addr,
+	uintptr_t ammo3Addr,
+	uintptr_t ammo4Addr,
+	uintptr_t ammo5Addr,
 	uintptr_t crossHairAddr
 	)
 	{
@@ -110,10 +111,11 @@ void WriteToMemory(
 	{
 		//Write to memory ammo
 		int newAmmo = 420;
-		WriteProcessMemory(hProcess, (BYTE*)primaryAmmoAddr, &newAmmo, sizeof(newAmmo), nullptr);
-		WriteProcessMemory(hProcess, (BYTE*)primaryAmmoSecondAddr, &newAmmo, sizeof(newAmmo), nullptr);
-		WriteProcessMemory(hProcess, (BYTE*)secondaryAmmoAddr, &newAmmo, sizeof(newAmmo), nullptr);
-		WriteProcessMemory(hProcess, (BYTE*)secondaryAmmoSecondAddr, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)ammo1Addr, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)ammo2Addr, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)ammo3Addr, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)ammo4Addr, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)ammo5Addr, &newAmmo, sizeof(newAmmo), nullptr);
 	}
 
 	// Health
