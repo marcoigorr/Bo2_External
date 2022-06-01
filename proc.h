@@ -18,7 +18,9 @@ void WriteToMemory(
 	bool bHealth,
 	bool bAmmo,
 	bool bFireRate,
+	bool bRecoil,
 	uintptr_t healthAddr,
 	uintptr_t primaryAmmoAddr,
-	uintptr_t secondaryAmmoAddr
+	uintptr_t secondaryAmmoAddr,
+	uintptr_t crossHairAddr
 );

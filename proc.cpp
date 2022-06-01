@@ -96,12 +96,14 @@ void WriteToMemory(
 	bool bHealth,
 	bool bAmmo, 
 	bool bFireRate,
+	bool bRecoil,
 	uintptr_t healthAddr,
 	uintptr_t primaryAmmoAddr, 
-	uintptr_t secondaryAmmoAddr	
+	uintptr_t secondaryAmmoAddr, 
+	uintptr_t crossHairAddr
 	)
 	{
-
+	// Ammo
 	if (bAmmo)
 	{
 		//Write to memory ammo
@@ -110,6 +112,7 @@ void WriteToMemory(
 		WriteProcessMemory(hProcess, (BYTE*)secondaryAmmoAddr, &newAmmo, sizeof(newAmmo), nullptr);
 	}
 
+	// Health
 	if (bHealth)
 	{
 		// 01 B7 A8010000 = add [edi+000001A8],esi
@@ -121,14 +124,45 @@ void WriteToMemory(
 		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x429E69), (BYTE*)("\x29\xB7\xA8\x01\x00\x00"), 6, hProcess);
 	}
 
+	// Fire Rate
 	if (bFireRate)
 	{
 		// 90 = nop
-		mem::NopEx((BYTE*)(moduleBaseAddr + 0x54B4BD), 2, hProcess);
+		mem::NopEx((BYTE*)(moduleBaseAddr + 0x54B4CA), 2, hProcess);
 	}
 	else
 	{
-		// 89 13 = mov [ebx],edx
-		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x54B4BD), (BYTE*)("\x89\x13"), 2, hProcess);
+		// 89 03 = mov [ebx],eax
+		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x54B4CA), (BYTE*)("\x89\x03"), 2, hProcess);
+	}
+
+	// Recoil not so recoil
+	if (bRecoil)
+	{
+		// Cursor size increment nop //
+		int crossHairSize = 0;
+
+		// F3 0F11 8E 88050000 - movss [esi+00000588],xmm1 (general)
+		mem::NopEx((BYTE*)(moduleBaseAddr + 0x1BB552), 8, hProcess);
+
+		// F3 0F11 86 88050000 - movss [esi+00000588],xmm0 (shooting)
+		mem::NopEx((BYTE*)(moduleBaseAddr + 0x54B8F5), 8, hProcess);
+
+		// F3 0F11 86 88050000 - movss [esi+00000588],xmm0 (hit)
+		mem::NopEx((BYTE*)(moduleBaseAddr + 0x2675E5), 8, hProcess);
+
+		//t6zm - Zombies Offline.exe+53B702 - D9 96 88050000 - fst dword ptr [esi+00000588] (jump)
+		mem::NopEx((BYTE*)(moduleBaseAddr + 0x53B702), 6, hProcess);
+
+		WriteProcessMemory(hProcess, (BYTE*)crossHairAddr, &crossHairSize, sizeof(crossHairSize), nullptr);
+
+	}
+	else
+	{
+		// Cursor size op restore
+		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x1BB552), (BYTE*)("\xF3\x0F\x11\x8E\x88\x05\x00\x00"), 8, hProcess);
+		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x54B8F5), (BYTE*)("\xF3\x0F\x11\x86\x88\x05\x00\x00"), 8, hProcess);
+		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x2675E5), (BYTE*)("\xF3\x0F\x11\x86\x88\x05\x00\x00"), 8, hProcess);
+		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x53B702), (BYTE*)("\xD9\x96\x88\x05\x00\x00"), 6, hProcess);
 	}
 }

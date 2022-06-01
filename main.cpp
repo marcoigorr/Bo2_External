@@ -5,15 +5,22 @@
 #include <Windows.h>
 #include "proc.h"
 
+void updateAddr(DWORD procId)
+{
+	
+}
+
 int main()
 {
 	HANDLE hProcess = 0;
 	uintptr_t moduleBaseAddr, localPlayerPtr, localPlayerPtrSuper;
 	uintptr_t nameAddr, healthAddr, healthMaxAddr, pointsAddr, primaryAmmoAddr, primaryMagAddr, secondaryAmmoAddr, secondaryMagAddr, grenadesAddr, grenadesSecAddr;
+	uintptr_t crossHairAddr;
 	std::string nameValue = "Game Name Here";
 	int healthValue, healthMaxValue, pointsValue, primaryAmmoValue, primaryMagValue, secondaryAmmoValue, secondaryMagValue, grenadesValue, grenadesSecValue;
+	int crossHairValue;
 
-	bool bHealth = false, bAmmo = false, bFireRate = false;
+	bool bHealth = false, bAmmo = false, bFireRate = false, bRecoil = false;
 
 	// For console output
 	bool UpdateOnNextRun = true;
@@ -21,6 +28,7 @@ int main()
 	std::string sAmmoStatus = "OFF";
 	std::string sHealthStatus = "OFF";
 	std::string sFireRateStatus = "OFF";
+	std::string sRecoilStatus = "OFF";
 
 	// Offsets
 	std::vector<unsigned int> nameOffset = { 0x5534 };
@@ -33,7 +41,9 @@ int main()
 	std::vector<unsigned int> secondaryMagOffset = { 0x3F8 };
 	std::vector<unsigned int> grenadesOffset = { 0x430 };
 	std::vector<unsigned int> grenadesSecOffset = { 0x438 };
+	std::vector<unsigned int> crossHairOffset = { 0x588 };
 
+	// Get process ID
 	DWORD procId = GetProcId(L"t6zm - Zombies Offline.exe");
 
 	if (procId)
@@ -55,6 +65,7 @@ int main()
 		secondaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryMagOffset);
 		grenadesAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesOffset);
 		grenadesSecAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesSecOffset);
+		crossHairAddr = FindDMAAddy(hProcess, localPlayerPtr, crossHairOffset);
 
 	}
 	else
@@ -68,6 +79,22 @@ int main()
 
 	while (GetExitCodeProcess(hProcess, &dwExitCode) && dwExitCode == STILL_ACTIVE)
 	{	
+		if (GetAsyncKeyState(VK_F10))
+		{
+			UpdateOnNextRun = true;
+
+			nameAddr = FindDMAAddy(hProcess, localPlayerPtr, nameOffset);
+			healthAddr = FindDMAAddy(hProcess, localPlayerPtrSuper, healthOffset);
+			healthMaxAddr = FindDMAAddy(hProcess, localPlayerPtrSuper, healthMaxOffset);
+			pointsAddr = FindDMAAddy(hProcess, localPlayerPtr, pointsOffset);
+			primaryAmmoAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryAmmoOffset);
+			primaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryMagOffset);
+			secondaryAmmoAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryAmmoOffset);
+			secondaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryMagOffset);
+			grenadesAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesOffset);
+			grenadesSecAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesSecOffset);
+		}
+
 		if (UpdateOnNextRun || clock() - timeSinceLastUpdate > 1000)
 		{
 			system("cls");
@@ -93,14 +120,17 @@ int main()
 			std::cout << "\t[F1] God Mode -> " << sHealthStatus << std::endl;
 			std::cout << "\t[F2] Unlimited Ammo -> " << sAmmoStatus << std::endl;
 			std::cout << "\t[F3] Fire Rate Hack -> " << sFireRateStatus << std::endl;
-			std::cout << "\t[F4] Add 500 points " << std::endl;
-			std::cout << "\t[F5] Add a Grenade " << std::endl;
-			std::cout << "\t[F6] Add a Grenade (second slot) " << std::endl;
+			std::cout << "\t[F4] Not so Recoil  -> " << sRecoilStatus << std::endl;
+			std::cout << "\t[F5] Add 500 points " << std::endl;
+			std::cout << "\t[F6] Add a Grenade " << std::endl;
+			std::cout << "\t[F7] Add a Grenade (second slot) " << std::endl << std::endl;
+
+			std::cout << "\t[F10] Update Addresses " << std::endl;
 			std::cout << "\n--------------------------------- INFO -----------------------------\n" << std::endl;
 
-			std::cout << "  Module Base Addr -> " << "0x" << std::hex << moduleBaseAddr << std::endl;
-			std::cout << "  Local player pointer -> " << "0x" << std::hex << localPlayerPtr << std::endl;
-			std::cout << "  Local player pointer super -> " << "0x" << std::hex << localPlayerPtrSuper << std::endl;
+			std::cout << "  Module Base Addr           -> " << "0x" << std::hex << moduleBaseAddr << std::endl;
+			std::cout << "  Local player pointer       -> " << "0x" << std::hex << localPlayerPtr << std::endl;
+			std::cout << "  Local player pointer super -> " << "0x" << std::hex << localPlayerPtrSuper << std::endl << std::endl;
 
 
 			std::cout << "  Health         -> " << "0x" << std::hex << healthAddr << "\tValue = " << std::dec << healthValue << std::endl;
@@ -170,6 +200,23 @@ int main()
 
 		}
 
+		// Recoil
+		if (GetAsyncKeyState(VK_F4) & 1)
+		{
+			UpdateOnNextRun = true;
+
+			bRecoil = !bRecoil;
+			if (bRecoil)
+			{
+				sRecoilStatus = "ON";
+			}
+			else
+			{
+				sRecoilStatus = "OFF";
+			}
+		}
+
+
 		// Points
 		if (GetAsyncKeyState(VK_F4) & 1)
 		{
@@ -194,11 +241,11 @@ int main()
 			WriteProcessMemory(hProcess, (BYTE*)grenadesSecAddr, &grenadesSecValue, sizeof(grenadesSecValue), NULL);
 		}
 
-		WriteToMemory(hProcess, moduleBaseAddr, localPlayerPtr, bHealth, bAmmo, bFireRate, healthAddr, primaryAmmoAddr, secondaryAmmoAddr);
+		WriteToMemory(hProcess, moduleBaseAddr, localPlayerPtr, bHealth, bAmmo, bFireRate, bRecoil, healthAddr, primaryAmmoAddr, secondaryAmmoAddr, crossHairAddr);
 	}
 
-
-	std::cout << "Process not found... Press any key to exit.  ";
+	system("cls");
+	std::cout << "Process closed or not found... Press any key to exit.  ";
 	getchar();
 	return 0;
 }
