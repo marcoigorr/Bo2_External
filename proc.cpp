@@ -155,10 +155,16 @@ void WriteToMemory(
 		// F3 0F11 86 88050000 - movss [esi+00000588],xmm0 (hit)
 		mem::NopEx((BYTE*)(moduleBaseAddr + 0x2675E5), 8, hProcess);
 
-		//t6zm - Zombies Offline.exe+53B702 - D9 96 88050000 - fst dword ptr [esi+00000588] (jump)
+		// D9 96 88050000 - fst dword ptr [esi+00000588] (jump)
 		mem::NopEx((BYTE*)(moduleBaseAddr + 0x53B702), 6, hProcess);
 
 		WriteProcessMemory(hProcess, (BYTE*)crossHairAddr, &crossHairSize, sizeof(crossHairSize), nullptr);
+
+		// Animation nop //
+		
+		// 89 96 80050000 - mov[esi + 00000580], edx (gun shooting animation)
+		mem::NopEx((BYTE*)(moduleBaseAddr + 0x54B8A7), 6, hProcess);
+
 
 	}
 	else
@@ -168,5 +174,8 @@ void WriteToMemory(
 		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x54B8F5), (BYTE*)("\xF3\x0F\x11\x86\x88\x05\x00\x00"), 8, hProcess);
 		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x2675E5), (BYTE*)("\xF3\x0F\x11\x86\x88\x05\x00\x00"), 8, hProcess);
 		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x53B702), (BYTE*)("\xD9\x96\x88\x05\x00\x00"), 6, hProcess);
+		// Animation restore
+		mem::PatchEx((BYTE*)(moduleBaseAddr + 0x54B8A7), (BYTE*)("\x89\x96\x80\x05\x00\x00"), 6, hProcess);
+
 	}
 }

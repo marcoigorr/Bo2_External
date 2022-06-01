@@ -83,25 +83,6 @@ int main()
 
 	while (GetExitCodeProcess(hProcess, &dwExitCode) && dwExitCode == STILL_ACTIVE)
 	{	
-		if (GetAsyncKeyState(VK_F10))
-		{
-			UpdateOnNextRun = true;
-
-			nameAddr = FindDMAAddy(hProcess, localPlayerPtr, nameOffset);
-			healthAddr = FindDMAAddy(hProcess, localPlayerPtrSuper, healthOffset);
-			healthMaxAddr = FindDMAAddy(hProcess, localPlayerPtrSuper, healthMaxOffset);
-			pointsAddr = FindDMAAddy(hProcess, localPlayerPtr, pointsOffset);
-			primaryAmmoAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryAmmoOffset);
-			primaryAmmoSecondAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryAmmoSecondOffset);
-			primaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryMagOffset);
-			secondaryAmmoAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryAmmoOffset);
-			secondaryAmmoSecondAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryAmmoSecondOffset);
-			secondaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryMagOffset);
-			grenadesAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesOffset);
-			grenadesSecAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesSecOffset);
-			crossHairAddr = FindDMAAddy(hProcess, localPlayerPtr, crossHairOffset);
-		}
-
 		if (UpdateOnNextRun || clock() - timeSinceLastUpdate > 1000)
 		{
 			system("cls");
@@ -156,6 +137,25 @@ int main()
 
 			UpdateOnNextRun = false;
 			timeSinceLastUpdate = clock();
+		}
+
+		if (GetAsyncKeyState(VK_F10) & 1)
+		{
+			UpdateOnNextRun = true;
+
+			nameAddr = FindDMAAddy(hProcess, localPlayerPtr, nameOffset);
+			healthAddr = FindDMAAddy(hProcess, localPlayerPtrSuper, healthOffset);
+			healthMaxAddr = FindDMAAddy(hProcess, localPlayerPtrSuper, healthMaxOffset);
+			pointsAddr = FindDMAAddy(hProcess, localPlayerPtr, pointsOffset);
+			primaryAmmoAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryAmmoOffset);
+			primaryAmmoSecondAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryAmmoSecondOffset);
+			primaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, primaryMagOffset);
+			secondaryAmmoAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryAmmoOffset);
+			secondaryAmmoSecondAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryAmmoSecondOffset);
+			secondaryMagAddr = FindDMAAddy(hProcess, localPlayerPtr, secondaryMagOffset);
+			grenadesAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesOffset);
+			grenadesSecAddr = FindDMAAddy(hProcess, localPlayerPtr, grenadesSecOffset);
+			crossHairAddr = FindDMAAddy(hProcess, localPlayerPtr, crossHairOffset);
 		}
 
 		// Health
@@ -225,7 +225,7 @@ int main()
 
 
 		// Points
-		if (GetAsyncKeyState(VK_F4) & 1)
+		if (GetAsyncKeyState(VK_F5) & 1)
 		{
 			UpdateOnNextRun = true;
 			pointsValue += 500;
@@ -233,7 +233,7 @@ int main()
 		}
 
 		// Primary Grenade +1
-		if (GetAsyncKeyState(VK_F5) & 1)
+		if (GetAsyncKeyState(VK_F6) & 1)
 		{
 			UpdateOnNextRun = true;
 			grenadesValue += 1;
@@ -241,7 +241,7 @@ int main()
 		}
 
 		// Secondary Grenade +1
-		if (GetAsyncKeyState(VK_F6) & 1)
+		if (GetAsyncKeyState(VK_F7) & 1)
 		{
 			UpdateOnNextRun = true;
 			grenadesSecValue += 1;
