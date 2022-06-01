@@ -99,7 +99,9 @@ void WriteToMemory(
 	bool bRecoil,
 	uintptr_t healthAddr,
 	uintptr_t primaryAmmoAddr, 
-	uintptr_t secondaryAmmoAddr, 
+	uintptr_t primaryAmmoSecondAddr,
+	uintptr_t secondaryAmmoAddr,
+	uintptr_t secondaryAmmoSecondAddr,
 	uintptr_t crossHairAddr
 	)
 	{
@@ -109,7 +111,9 @@ void WriteToMemory(
 		//Write to memory ammo
 		int newAmmo = 420;
 		WriteProcessMemory(hProcess, (BYTE*)primaryAmmoAddr, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)primaryAmmoSecondAddr, &newAmmo, sizeof(newAmmo), nullptr);
 		WriteProcessMemory(hProcess, (BYTE*)secondaryAmmoAddr, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)secondaryAmmoSecondAddr, &newAmmo, sizeof(newAmmo), nullptr);
 	}
 
 	// Health

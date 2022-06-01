@@ -21,6 +21,8 @@ void WriteToMemory(
 	bool bRecoil,
 	uintptr_t healthAddr,
 	uintptr_t primaryAmmoAddr,
+	uintptr_t primaryAmmoSecondAddr,
 	uintptr_t secondaryAmmoAddr,
+	uintptr_t secondaryAmmoSecondAddr,
 	uintptr_t crossHairAddr
 );
