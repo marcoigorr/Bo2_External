@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <Psapi.h>
+#include "playerStruct.h"
 
 DWORD GetProcId(const wchar_t* procName);
 
@@ -11,19 +12,4 @@ DWORD_PTR GetModuleBaseAddress64(DWORD processID);
 
 uintptr_t FindDMAAddy(HANDLE hProc, uintptr_t ptr, std::vector<unsigned int> offsets);
 
-void WriteToMemory(
-	HANDLE hProcess,
-	uintptr_t moduleBaseAddr,
-	uintptr_t playerPtrBase,
-	bool bHealth,
-	bool bAmmo,
-	bool bFireRate,
-	bool bRecoil,
-	uintptr_t healthAddr,
-	uintptr_t ammo1Addr,
-	uintptr_t ammo2Addr,
-	uintptr_t ammo3Addr,
-	uintptr_t ammo4Addr,
-	uintptr_t ammo5Addr,
-	uintptr_t crossHairAddr
-);
+void WriteToMemory(HANDLE hProcess,	uintptr_t moduleBaseAddr, uintptr_t playerPtrBase, bool bHealth, bool bAmmo, bool bFireRate, bool bRecoil, PlayerAddr *_pAddrPtr);

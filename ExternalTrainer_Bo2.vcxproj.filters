@@ -41,5 +41,8 @@
     <ClInclude Include="mem.h">
       <Filter>mem</Filter>
     </ClInclude>
+    <ClInclude Include="playerStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

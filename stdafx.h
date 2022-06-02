@@ -11,3 +11,4 @@
 #include <Psapi.h>
 #include "mem.h"
 #include "proc.h"
+#include "playerStruct.h"

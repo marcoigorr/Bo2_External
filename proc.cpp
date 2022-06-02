@@ -89,33 +89,18 @@ uintptr_t FindDMAAddy(HANDLE hProc, uintptr_t ptr, std::vector<unsigned int> off
 	return addr;
 }
 
-void WriteToMemory(
-	HANDLE hProcess, 
-	uintptr_t moduleBaseAddr,
-	uintptr_t playerPtrBase, 
-	bool bHealth,
-	bool bAmmo, 
-	bool bFireRate,
-	bool bRecoil,
-	uintptr_t healthAddr,
-	uintptr_t ammo1Addr, 
-	uintptr_t ammo2Addr,
-	uintptr_t ammo3Addr,
-	uintptr_t ammo4Addr,
-	uintptr_t ammo5Addr,
-	uintptr_t crossHairAddr
-	)
+void WriteToMemory(HANDLE hProcess, uintptr_t moduleBaseAddr, uintptr_t playerPtrBase, bool bHealth, bool bAmmo, bool bFireRate, bool bRecoil, PlayerAddr *_pAddrPtr)
 	{
 	// Ammo
 	if (bAmmo)
 	{
 		//Write to memory ammo
 		int newAmmo = 420;
-		WriteProcessMemory(hProcess, (BYTE*)ammo1Addr, &newAmmo, sizeof(newAmmo), nullptr);
-		WriteProcessMemory(hProcess, (BYTE*)ammo2Addr, &newAmmo, sizeof(newAmmo), nullptr);
-		WriteProcessMemory(hProcess, (BYTE*)ammo3Addr, &newAmmo, sizeof(newAmmo), nullptr);
-		WriteProcessMemory(hProcess, (BYTE*)ammo4Addr, &newAmmo, sizeof(newAmmo), nullptr);
-		WriteProcessMemory(hProcess, (BYTE*)ammo5Addr, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)_pAddrPtr->ammo1, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)_pAddrPtr->ammo2, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)_pAddrPtr->ammo3, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)_pAddrPtr->ammo4, &newAmmo, sizeof(newAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)_pAddrPtr->ammo5, &newAmmo, sizeof(newAmmo), nullptr);
 	}
 
 	// Health
@@ -160,7 +145,7 @@ void WriteToMemory(
 		// D9 96 88050000 - fst dword ptr [esi+00000588] (jump)
 		mem::NopEx((BYTE*)(moduleBaseAddr + 0x53B702), 6, hProcess);
 
-		WriteProcessMemory(hProcess, (BYTE*)crossHairAddr, &crossHairSize, sizeof(crossHairSize), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)_pAddrPtr->crossHair, &crossHairSize, sizeof(crossHairSize), nullptr);
 
 		// Animation nop //
 		

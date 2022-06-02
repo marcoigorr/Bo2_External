@@ -145,6 +145,7 @@
     <ClCompile Include="proc.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="playerStruct.h" />
     <ClInclude Include="mem.h" />
     <ClInclude Include="proc.h" />
     <ClInclude Include="stdafx.h" />
