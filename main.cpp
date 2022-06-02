@@ -117,7 +117,7 @@ int main()
 			std::cout << "\t[F5] Add 500 points " << std::endl;
 			std::cout << "\t[F6] Add a Grenade " << std::endl;
 
-			std::cout << "\t[F10] Update Addresses " << std::endl;
+			std::cout << "\n\t[F10] Update Addresses " << std::endl;
 			std::cout << "\n--------------------------------- INFO -----------------------------\n" << std::endl;
 
 			std::cout << "  Module Base Addr           -> " << "0x" << std::hex << moduleBaseAddr << std::endl;
@@ -126,9 +126,7 @@ int main()
 
 			std::cout << "  Health         -> " << "0x" << std::hex << healthAddr << "\tValue = " << std::dec << healthValue << std::endl;
 			std::cout << "  Health Max     -> " << "0x" << std::hex << healthMaxAddr << "\tValue = " << std::dec << healthMaxValue << std::endl;
-
 			std::cout << "  Points         -> " << "0x" << std::hex << pointsAddr << "\tValue = " << std::dec << pointsValue << std::endl;
-
 			std::cout << "  Primary Mag    -> " << "0x" << std::hex << primaryMagAddr << "\tValue = " << std::dec << primaryMagValue << std::endl;
 			std::cout << "  Secondary Mag  -> " << "0x" << std::hex << secondaryMagAddr << "\tValue = " << std::dec << secondaryMagValue << std::endl;
 			std::cout << "  Ammo 1         -> " << "0x" << std::hex << ammo1Addr << "\tValue = " << std::dec << ammo1Value << std::endl;
