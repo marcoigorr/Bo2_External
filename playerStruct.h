@@ -3,45 +3,45 @@
 
 struct PlayerAddr
 {
-	uintptr_t name = 0;
-	uintptr_t health = 0;
-	uintptr_t healthMax = 0;
-	uintptr_t points = 0;
-	uintptr_t primaryMag = 0;
-	uintptr_t secondaryMag = 0;
-	uintptr_t ammo1 = 0;
-	uintptr_t ammo2 = 0;
-	uintptr_t ammo3 = 0;
-	uintptr_t ammo4 = 0;
-	uintptr_t ammo5 = 0;
-	uintptr_t grenades = 0;
+	uintptr_t name;
+	uintptr_t health;
+	uintptr_t healthMax;
+	uintptr_t points;
+	uintptr_t primaryMag;
+	uintptr_t secondaryMag;
+	uintptr_t ammo1;
+	uintptr_t ammo2;
+	uintptr_t ammo3;
+	uintptr_t ammo4;
+	uintptr_t ammo5;
+	uintptr_t grenades;
 
-	uintptr_t crossHair = 0;
+	uintptr_t crossHair;
 };
 
 struct PlayerValues
 {
-	char name[16] = "Game Name Here";
-	int health = 0;
-	int healthMax = 0;
-	int points = 0;
-	int primaryMag = 0;
-	int secondaryMag = 0;
-	int ammo1 = 0;
-	int ammo2 = 0;
-	int ammo3 = 0;
-	int ammo4 = 0;
-	int ammo5 = 0;
-	int grenades = 0;
+	char name[16];
+	int health;
+	int healthMax;
+	int points;
+	int primaryMag;
+	int secondaryMag;
+	int ammo1;
+	int ammo2;
+	int ammo3;
+	int ammo4;
+	int ammo5;
+	int grenades;
 
-	int crossHair = 0;
+	int crossHair;
 };
 
 struct PlayerOffsets
 {
 	std::vector<unsigned int> name = { 0x5534 };
-	std::vector<unsigned int> health = { 0x1A8 };
-	std::vector<unsigned int> healthMax = { 0x1AC };
+	std::vector<unsigned int> health = { 0x0, 0x1A8 };
+	std::vector<unsigned int> healthMax = { 0x0, 0x1AC };
 	std::vector<unsigned int> points = { 0x55C8 };
 	std::vector<unsigned int> primaryMag = { 0x3F0 };
 	std::vector<unsigned int> secondaryMag = { 0x3F8 };

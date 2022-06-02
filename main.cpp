@@ -1,9 +1,6 @@
 
 #include "stdafx.h"
 
-void updateAddr(HANDLE hProcess, uintptr_t localPlayerPtr, uintptr_t localPlayerPtrSuper, PlayerAddr _pAddr, PlayerOffsets _pOffsets);
-void readValues(HANDLE hProcess, PlayerAddr _pAddr, PlayerValues _pValues);
-
 int main()
 {
 	PlayerAddr _pAddr;
@@ -15,7 +12,7 @@ int main()
 	PlayerOffsets *_pOffsetsPtr = &_pOffsets;
 
 	HANDLE hProcess = 0;
-	uintptr_t moduleBaseAddr, localPlayerPtr, localPlayerPtrSuper;
+	uintptr_t moduleBaseAddr, localPlayerPtr, entList;
 
 	bool bHealth = false, bAmmo = false, bFireRate = false, bRecoil = false;
 
@@ -37,9 +34,21 @@ int main()
 		moduleBaseAddr = GetModuleBaseAddress64(procId);
 
 		localPlayerPtr = moduleBaseAddr + 0x01D88290;
-		localPlayerPtrSuper = moduleBaseAddr + 0x01F38784;
+		entList = moduleBaseAddr + 0x01F387A8;
 
-		updateAddr(hProcess, localPlayerPtr, localPlayerPtrSuper, _pAddr, _pOffsets);
+		_pAddr.name = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.name);
+		_pAddr.health = FindDMAAddy(hProcess, entList, _pOffsets.health);
+		_pAddr.healthMax = FindDMAAddy(hProcess, entList, _pOffsets.healthMax);
+		_pAddr.points = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.points);
+		_pAddr.primaryMag = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.primaryMag);
+		_pAddr.secondaryMag = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.secondaryMag);
+		_pAddr.ammo1 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo1);
+		_pAddr.ammo2 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo2);
+		_pAddr.ammo3 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo3);
+		_pAddr.ammo4 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo4);
+		_pAddr.ammo5 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo5);
+		_pAddr.grenades = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.grenades);
+		_pAddr.crossHair = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.crossHair);
 	}
 	else
 	{
@@ -56,7 +65,17 @@ int main()
 		{
 			system("cls");
 
-			readValues(hProcess, _pAddr, _pValues);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.health, &_pValues.health, sizeof(_pValues.health), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.healthMax, &_pValues.healthMax, sizeof(_pValues.healthMax), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.points, &_pValues.points, sizeof(_pValues.points), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.primaryMag, &_pValues.primaryMag, sizeof(_pValues.primaryMag), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.secondaryMag, &_pValues.secondaryMag, sizeof(_pValues.secondaryMag), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.ammo1, &_pValues.ammo1, sizeof(_pValues.ammo1), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.ammo2, &_pValues.ammo2, sizeof(_pValues.ammo2), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.ammo3, &_pValues.ammo3, sizeof(_pValues.ammo3), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.ammo4, &_pValues.ammo4, sizeof(_pValues.ammo4), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.ammo5, &_pValues.ammo5, sizeof(_pValues.ammo5), NULL);
+			ReadProcessMemory(hProcess, (BYTE*)_pAddr.grenades, &_pValues.grenades, sizeof(_pValues.grenades), NULL);
 
 			std::cout << "----------------------------------------------------------------------" << std::endl;
 			std::cout << "                     t6zm - Zombies Offline Cheats" << std::endl;
@@ -71,9 +90,9 @@ int main()
 			std::cout << "\n\t[F10] Update Addresses " << std::endl;
 			std::cout << "\n--------------------------------- INFO -----------------------------\n" << std::endl;
 
-			std::cout << "  Module Base Addr           -> " << "0x" << std::hex << moduleBaseAddr << std::endl;
-			std::cout << "  Local player pointer       -> " << "0x" << std::hex << localPlayerPtr << std::endl;
-			std::cout << "  Local player pointer super -> " << "0x" << std::hex << localPlayerPtrSuper << std::endl << std::endl;
+			std::cout << "  Module Base Addr      -> " << "0x" << std::hex << moduleBaseAddr << std::endl;
+			std::cout << "  Local player pointer  -> " << "0x" << std::hex << localPlayerPtr << std::endl;
+			std::cout << "  Entity List           -> " << "0x" << std::hex << entList << std::endl << std::endl;
 
 			std::cout << "  Health         -> " << "0x" << std::hex << _pAddr.health << "\tValue = " << std::dec << _pValues.health << std::endl;
 			std::cout << "  Health Max     -> " << "0x" << std::hex << _pAddr.healthMax << "\tValue = " << std::dec << _pValues.healthMax << std::endl;
@@ -96,7 +115,19 @@ int main()
 		{
 			UpdateOnNextRun = true;
 
-			updateAddr(hProcess, localPlayerPtr, localPlayerPtrSuper, _pAddr, _pOffsets);
+			_pAddr.name = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.name);
+			_pAddr.health = FindDMAAddy(hProcess, entList, _pOffsets.health);
+			_pAddr.healthMax = FindDMAAddy(hProcess, entList, _pOffsets.healthMax);
+			_pAddr.points = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.points);
+			_pAddr.primaryMag = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.primaryMag);
+			_pAddr.secondaryMag = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.secondaryMag);
+			_pAddr.ammo1 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo1);
+			_pAddr.ammo2 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo2);
+			_pAddr.ammo3 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo3);
+			_pAddr.ammo4 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo4);
+			_pAddr.ammo5 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo5);
+			_pAddr.grenades = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.grenades);
+			_pAddr.crossHair = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.crossHair);
 		}
 
 		// Health
@@ -188,36 +219,4 @@ int main()
 	std::cout << "Process closed or not found... Press any key to exit.  ";
 	getchar();
 	return 0;
-}
-
-void updateAddr(HANDLE hProcess, uintptr_t localPlayerPtr, uintptr_t localPlayerPtrSuper, PlayerAddr _pAddr, PlayerOffsets _pOffsets)
-{
-	_pAddr.name = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.name);
-	_pAddr.health = FindDMAAddy(hProcess, localPlayerPtrSuper, _pOffsets.health);
-	_pAddr.healthMax = FindDMAAddy(hProcess, localPlayerPtrSuper, _pOffsets.healthMax);
-	_pAddr.points = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.points);
-	_pAddr.primaryMag = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.primaryMag);
-	_pAddr.secondaryMag = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.secondaryMag);
-	_pAddr.ammo1 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo1);
-	_pAddr.ammo2 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo2);
-	_pAddr.ammo3 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo3);
-	_pAddr.ammo4 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo4);
-	_pAddr.ammo5 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.ammo5);
-	_pAddr.grenades = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.grenades);
-	_pAddr.crossHair = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets.crossHair);
-}
-
-void readValues(HANDLE hProcess, PlayerAddr _pAddr, PlayerValues _pValues)
-{
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.health, &_pValues.health, sizeof(_pValues.health), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.healthMax, &_pValues.healthMax, sizeof(_pValues.healthMax), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.points, &_pValues.points, sizeof(_pValues.points), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.primaryMag, &_pValues.primaryMag, sizeof(_pValues.primaryMag), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.secondaryMag, &_pValues.secondaryMag, sizeof(_pValues.secondaryMag), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.ammo1, &_pValues.ammo1, sizeof(_pValues.ammo1), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.ammo2, &_pValues.ammo2, sizeof(_pValues.ammo2), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.ammo3, &_pValues.ammo3, sizeof(_pValues.ammo3), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.ammo4, &_pValues.ammo4, sizeof(_pValues.ammo4), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.ammo5, &_pValues.ammo5, sizeof(_pValues.ammo5), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr.grenades, &_pValues.grenades, sizeof(_pValues.grenades), NULL);
 }
