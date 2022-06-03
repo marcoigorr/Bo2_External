@@ -53,4 +53,6 @@ struct PlayerOffsets
 	std::vector<unsigned int> grenades = { 0x430 };
 
 	std::vector<unsigned int> crossHair = { 0x588 };
+
+	std::vector<unsigned int> viewMatrix = { 0x128 };
 };
