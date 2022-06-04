@@ -89,6 +89,8 @@ uintptr_t FindDMAAddy(HANDLE hProc, uintptr_t ptr, std::vector<unsigned int> off
 	return addr;
 }
 
+
+/*
 void WriteToMemory(HANDLE hProcess, uintptr_t moduleBaseAddr, uintptr_t playerPtrBase, bool bHealth, bool bAmmo, bool bFireRate, bool bRecoil, PlayerAddr *_pAddrPtr)
 	{
 	// Ammo
@@ -166,3 +168,4 @@ void WriteToMemory(HANDLE hProcess, uintptr_t moduleBaseAddr, uintptr_t playerPt
 
 	}
 }
+*/

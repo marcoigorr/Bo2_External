@@ -1,220 +1,137 @@
 
-#include "stdafx.h"
+#include "GL/glew.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+#include <iostream>
+#include <GLFW/glfw3.h>
+#include "MemMan.h"
+#include "proc.h"
+#include "Options.h"
+#include "Offsets.h"
+#include "Menu.h"
 
-void findAddr(HANDLE hProcess, uintptr_t localPlayerPtr, uintptr_t entList, PlayerAddr* _pAddr, PlayerOffsets* _pOffsets);
-void readValues(HANDLE hProcess, PlayerAddr* _pAddr, PlayerValues* _pValues);
 
-int main()
+int main(int, char**)
 {
-	PlayerAddr _pAddr;
-	PlayerValues _pValues;
-	PlayerOffsets _pOffsets;
+    // Setup window
+    if (!glfwInit())
+    {
+        std::cout << "Failed to initialize glfw!\n";
+        return 1;
+    }     
 
-	HANDLE hProcess = 0;
-	uintptr_t moduleBaseAddr, localPlayerPtr, entList, cg;
+    // GL+GLSL verion
+    const char* glsl_version = "#version 130";
 
-	bool bHealth = false, bAmmo = false, bFireRate = false, bRecoil = false;
+    // Get Primary monitor
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    if (!monitor)
+    {
+        std::cout << "Failed to get primary monitor!\n";
+        return 0;
+    }
+    int width = glfwGetVideoMode(monitor)->width;
+    int height = glfwGetVideoMode(monitor)->height;
 
-	// For console output
-	bool UpdateOnNextRun = true;
-	int timeSinceLastUpdate = clock();
-	std::string sAmmoStatus = "OFF";
-	std::string sHealthStatus = "OFF";
-	std::string sFireRateStatus = "OFF";
-	std::string sRecoilStatus = "OFF";
+    // Window Properties
+    glfwWindowHint(GLFW_FLOATING, true);
+    glfwWindowHint(GLFW_RESIZABLE, false);
+    glfwWindowHint(GLFW_MAXIMIZED, true);
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, true);
 
-	// Get process ID
-	DWORD procId = GetProcId(L"t6zm - Zombies Offline.exe");
+    // Create window with graphics context
+    GLFWwindow* window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
+    if (window == NULL)
+    {
+        return 1;
+    }
+    glfwSetWindowAttrib(window, GLFW_DECORATED, false);
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1); // Enable vsync
 
-	if (procId)
-	{
-		hProcess = OpenProcess(PROCESS_ALL_ACCESS, NULL, procId);
+    if (glewInit() != GLEW_OK)
+    {
+        std::cout << "Failed to initialize OpenGL loader!\n";
+        return 1;
+    }
 
-		moduleBaseAddr = GetModuleBaseAddress64(procId);
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-		localPlayerPtr = moduleBaseAddr + 0x01D88290;
-		entList = moduleBaseAddr + 0x01F387A8;
-		cg = moduleBaseAddr + 0x0103AC50; // client game
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
 
-		findAddr(hProcess, localPlayerPtr, entList, &_pAddr, &_pOffsets);
-	}
-	else
-	{
-		std::cout << "\n\nProcess not found... press any key to exit.  ";
-		getchar();
-		return 0;
-	}
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
 
-	DWORD dwExitCode = 0;
+    DWORD procId = GetProcId(L"plutonium - bootstrapper - win32.exe");
+    if (!procId)
+    {
+        std::cout << "\nProcess not found, press any key to exit";
+        std::cin;
+        return 0;
+    }
+    
+    // Open Handle to process
+    HANDLE hProcess = 0;
+    hProcess = OpenProcess(PROCESS_ALL_ACCESS, NULL, procId);
 
-	while (GetExitCodeProcess(hProcess, &dwExitCode) && dwExitCode == STILL_ACTIVE)
-	{	
-		if (UpdateOnNextRun || clock() - timeSinceLastUpdate > 2000)
-		{
-			system("cls");
+    // Get process's module base address 
+    uintptr_t aModuleBase = GetModuleBaseAddress64(procId);
 
-			readValues(hProcess, &_pAddr, &_pValues);
+    uintptr_t aLocalPlayer = aModuleBase + p_process->local_player;
+    uintptr_t aEntList = aModuleBase + p_process->entity_list;
+    uintptr_t aClientGame = aModuleBase + p_process->client_game;
 
-			std::cout << "----------------------------------------------------------------------" << std::endl;
-			std::cout << "                     t6zm - Zombies Offline Cheats" << std::endl;
-			std::cout << "----------------------------------------------------------------------" << std::endl << std::endl;
-			std::cout << "\t[F1] God Mode -> " << sHealthStatus << std::endl;
-			std::cout << "\t[F2] Unlimited Ammo -> " << sAmmoStatus << std::endl;
-			std::cout << "\t[F3] Fire Rate Hack -> " << sFireRateStatus << std::endl;
-			std::cout << "\t[F4] Not so Recoil  -> " << sRecoilStatus << std::endl;
-			std::cout << "\t[F5] Add 500 points " << std::endl;
-			std::cout << "\t[F6] Add a Grenade " << std::endl;
+    /* --------- Main Loop --------- */
+    while (!glfwWindowShouldClose(window))
+    {
+        glfwPollEvents();
 
-			std::cout << "\n\t[F10] Update Addresses " << std::endl;
-			std::cout << "\n--------------------------------- INFO -----------------------------\n" << std::endl;
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-			std::cout << "  Module Base Addr      -> " << "0x" << std::hex << moduleBaseAddr << std::endl;
-			std::cout << "  Local player pointer  -> " << "0x" << std::hex << localPlayerPtr << std::endl;
-			std::cout << "  Entity List           -> " << "0x" << std::hex << entList << std::endl << std::endl;
-			std::cout << "  Health         -> " << "0x" << std::hex << _pAddr.health << "\tValue = " << std::dec << _pValues.health << std::endl;
-			std::cout << "  Health Max     -> " << "0x" << std::hex << _pAddr.healthMax << "\tValue = " << std::dec << _pValues.healthMax << std::endl;
-			std::cout << "  Points         -> " << "0x" << std::hex << _pAddr.points << "\tValue = " << std::dec << _pValues.points << std::endl;
-			std::cout << "  Primary Mag    -> " << "0x" << std::hex << _pAddr.primaryMag << "\tValue = " << std::dec << _pValues.primaryMag << std::endl;
-			std::cout << "  Secondary Mag  -> " << "0x" << std::hex << _pAddr.secondaryMag << "\tValue = " << std::dec << _pValues.secondaryMag << std::endl;
-			std::cout << "  Ammo 1         -> " << "0x" << std::hex << _pAddr.ammo1 << "\tValue = " << std::dec << _pValues.ammo1 << std::endl;
-			std::cout << "  Ammo 2         -> " << "0x" << std::hex << _pAddr.ammo2 << "\tValue = " << std::dec << _pValues.ammo2 << std::endl;
-			std::cout << "  Ammo 3         -> " << "0x" << std::hex << _pAddr.ammo3 << "\tValue = " << std::dec << _pValues.ammo3 << std::endl;
-			std::cout << "  Ammo 4         -> " << "0x" << std::hex << _pAddr.ammo4 << "\tValue = " << std::dec << _pValues.ammo4 << std::endl;
-			std::cout << "  Ammo 5         -> " << "0x" << std::hex << _pAddr.ammo5 << "\tValue = " << std::dec << _pValues.ammo5 << std::endl;
-			std::cout << "  Grenades       -> " << "0x" << std::hex << _pAddr.grenades << "\tValue = " << std::dec << _pValues.grenades << std::endl;
+        // Menu overlay show/hide
+        if (GetAsyncKeyState(VK_INSERT) & 1)
+        {
+            Options::bMenu = !Options::bMenu;            
+        }
 
-			UpdateOnNextRun = false;
-			timeSinceLastUpdate = clock();
-		}
+        // Draw here
+        if (Options::bMenu)
+        {
+            if (ImGui::Button("Exit"))
+            {
+                return 0;
+            }
+        }
 
-		// Recalculate addresses
-		if (GetAsyncKeyState(VK_F10) & 1)
-		{
-			UpdateOnNextRun = true;
+        updateMenu(window);
 
-			findAddr(hProcess, localPlayerPtr, entList, &_pAddr, &_pOffsets);
-		}
+        // Rendering
+        ImGui::Render();
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+        glViewport(0, 0, display_w, display_h);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		// Health
-		if (GetAsyncKeyState(VK_F1) & 1)
-		{
-			UpdateOnNextRun = true;
+        glfwSwapBuffers(window);
+    }
 
-			bHealth = !bHealth;
-			if (bHealth)
-			{
-				sHealthStatus = "ON";
-			}
-			else
-			{
-				sHealthStatus = "OFF";
-			}
-		}
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
-		// Ammo
-		if (GetAsyncKeyState(VK_F2) & 1)
-		{
-			UpdateOnNextRun = true;
+    glfwDestroyWindow(window);
+    glfwTerminate();
 
-			bAmmo = !bAmmo;
-			if (bAmmo)
-			{
-				sAmmoStatus = "ON";
-			}
-			else
-			{
-				sAmmoStatus = "OFF";
-			}
-		}
-
-		// Fire Rate
-		if (GetAsyncKeyState(VK_F3) & 1)
-		{
-			UpdateOnNextRun = true;
-
-			bFireRate = !bFireRate;
-			if (bFireRate)
-			{
-				sFireRateStatus = "ON";
-			}
-			else
-			{
-				sFireRateStatus = "OFF";
-			}
-
-		}
-
-		// Recoil
-		if (GetAsyncKeyState(VK_F4) & 1)
-		{
-			UpdateOnNextRun = true;
-
-			bRecoil = !bRecoil;
-			if (bRecoil)
-			{
-				sRecoilStatus = "ON";
-			}
-			else
-			{
-				sRecoilStatus = "OFF";
-			}
-		}
-
-		// Points
-		if (GetAsyncKeyState(VK_F5) & 1)
-		{
-			UpdateOnNextRun = true;
-			_pValues.points += 500;
-			WriteProcessMemory(hProcess, (BYTE*)_pAddr.points, &_pValues.points, sizeof(_pValues.points), NULL);
-		}
-
-		// Primary Grenade +1
-		if (GetAsyncKeyState(VK_F6) & 1)
-		{
-			UpdateOnNextRun = true;
-			_pValues.grenades += 1;
-			WriteProcessMemory(hProcess, (BYTE*)_pAddr.grenades, &_pValues.grenades, sizeof(_pValues.grenades), NULL);
-		}
-
-		WriteToMemory(hProcess, moduleBaseAddr, localPlayerPtr, bHealth, bAmmo, bFireRate, bRecoil, &_pAddr);
-	}
-
-	system("cls");
-	std::cout << "Process closed or not found... Press any key to exit.  ";
-	getchar();
-	return 0;
-}
-
-void findAddr(HANDLE hProcess, uintptr_t localPlayerPtr, uintptr_t entList, PlayerAddr *_pAddr, PlayerOffsets *_pOffsets)
-{
-	// Very nice code right here
-	_pAddr->name = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->name);
-	_pAddr->health = FindDMAAddy(hProcess, entList, _pOffsets->health);
-	_pAddr->healthMax = FindDMAAddy(hProcess, entList, _pOffsets->healthMax);
-	_pAddr->points = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->points);
-	_pAddr->primaryMag = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->primaryMag);
-	_pAddr->secondaryMag = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->secondaryMag);
-	_pAddr->ammo1 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->ammo1);
-	_pAddr->ammo2 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->ammo2);
-	_pAddr->ammo3 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->ammo3);
-	_pAddr->ammo4 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->ammo4);
-	_pAddr->ammo5 = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->ammo5);
-	_pAddr->grenades = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->grenades);
-	_pAddr->crossHair = FindDMAAddy(hProcess, localPlayerPtr, _pOffsets->crossHair);
-}
-
-void readValues(HANDLE hProcess, PlayerAddr *_pAddr, PlayerValues *_pValues)
-{
-	// Very nice code right here 2
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->health, &_pValues->health, sizeof(_pValues->health), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->healthMax, &_pValues->healthMax, sizeof(_pValues->healthMax), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->points, &_pValues->points, sizeof(_pValues->points), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->primaryMag, &_pValues->primaryMag, sizeof(_pValues->primaryMag), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->secondaryMag, &_pValues->secondaryMag, sizeof(_pValues->secondaryMag), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->ammo1, &_pValues->ammo1, sizeof(_pValues->ammo1), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->ammo2, &_pValues->ammo2, sizeof(_pValues->ammo2), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->ammo3, &_pValues->ammo3, sizeof(_pValues->ammo3), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->ammo4, &_pValues->ammo4, sizeof(_pValues->ammo4), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->ammo5, &_pValues->ammo5, sizeof(_pValues->ammo5), NULL);
-	ReadProcessMemory(hProcess, (BYTE*)_pAddr->grenades, &_pValues->grenades, sizeof(_pValues->grenades), NULL);
+    return 0;
 }

@@ -19,6 +19,15 @@
     <Filter Include="mem">
       <UniqueIdentifier>{e9ed6a77-5d77-4dd5-896b-9c81439c5b0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\imgui">
+      <UniqueIdentifier>{e9cdc7bd-1369-43f1-b88a-aeac688bf2b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Options">
+      <UniqueIdentifier>{9b722f15-7eba-4329-a13b-fe40a78618eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Menu">
+      <UniqueIdentifier>{c152ec64-bc5c-4dd1-9a56-cd7ba2c7409f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,8 +36,35 @@
     <ClCompile Include="proc.cpp">
       <Filter>proc</Filter>
     </ClCompile>
-    <ClCompile Include="mem.cpp">
+    <ClCompile Include="include\imgui\imgui.cpp">
+      <Filter>Header Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_demo.cpp">
+      <Filter>Header Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_draw.cpp">
+      <Filter>Header Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_impl_glfw.cpp">
+      <Filter>Header Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp">
+      <Filter>Header Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_tables.cpp">
+      <Filter>Header Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="include\imgui\imgui_widgets.cpp">
+      <Filter>Header Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="MemMan.cpp">
       <Filter>mem</Filter>
+    </ClCompile>
+    <ClCompile Include="Offsets.cpp">
+      <Filter>Options</Filter>
+    </ClCompile>
+    <ClCompile Include="Options.cpp">
+      <Filter>Options</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -38,11 +74,17 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mem.h">
+    <ClInclude Include="MemMan.h">
       <Filter>mem</Filter>
     </ClInclude>
-    <ClInclude Include="playerStruct.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Options.h">
+      <Filter>Options</Filter>
+    </ClInclude>
+    <ClInclude Include="Offsets.h">
+      <Filter>Options</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Menu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

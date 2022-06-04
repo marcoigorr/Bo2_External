@@ -1,7 +1,17 @@
-#include "stdafx.h" 
-#include "mem.h"
+#include "MemMan.h"
+#include <TlHelp32.h>
+#include <iostream>
+#include <iomanip>
+#include <Psapi.h>
 
-void mem::PatchEx(BYTE* dst, BYTE* src, unsigned int size, HANDLE hProcess)
+
+MemMan::MemMan() { handle = NULL; }
+MemMan::~MemMan()
+{
+	CloseHandle(handle);
+}
+
+void MemMan::PatchEx(BYTE* dst, BYTE* src, unsigned int size, HANDLE hProcess)
 {
 	DWORD oldprotect;
 	VirtualProtectEx(hProcess, dst, size, PAGE_EXECUTE_READWRITE, &oldprotect);
@@ -9,7 +19,7 @@ void mem::PatchEx(BYTE* dst, BYTE* src, unsigned int size, HANDLE hProcess)
 	VirtualProtectEx(hProcess, dst, size, oldprotect, &oldprotect);
 }
 
-void mem::NopEx(BYTE* dst, unsigned int size, HANDLE hProcess)
+void MemMan::NopEx(BYTE* dst, unsigned int size, HANDLE hProcess)
 {
 	BYTE* nopArray = new BYTE[size];
 	memset(nopArray, 0x90, size);

@@ -9,6 +9,3 @@
 #include <Windows.h>
 #include <TlHelp32.h>
 #include <Psapi.h>
-#include "mem.h"
-#include "proc.h"
-#include "playerStruct.h"
