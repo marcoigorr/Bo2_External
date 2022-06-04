@@ -21,3 +21,6 @@ In case you have opened the program before starting the zombie match, you will n
   - Unlimited Points
   - Rapid Fire
   - Recoil (not complete)
+
+## Credits
+Guided Hacking
