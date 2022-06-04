@@ -12,17 +12,17 @@ public:
 	~MemMan();
 
 	template <class T>
-	static T ReadMem(uintptr_t addr)
+	static T ReadMem(HANDLE hProcess, uintptr_t addr)
 	{
 		T x;
-		ReadProcessMemory(handle, (LPBYTE*)addr, &x, sizeof(x), NULL);
+		ReadProcessMemory(hProcess, (LPBYTE*)addr, &x, sizeof(x), NULL);
 		return x;
 	}
 
 	template <class T>
-	static T WriteMem(uintptr_t addr, T x)
+	static T WriteMem(HANDLE hProcess, uintptr_t addr, T x)
 	{
-		WriteProcessMemory(handle, (LPBYTE*)addr, &x, sizeof(x), NULL);
+		WriteProcessMemory(hProcess, (LPBYTE*)addr, &x, sizeof(x), NULL);
 		return x;
 	}
 

@@ -2,7 +2,7 @@
 #include "MemMan.h"
 
 Offsets* offsets = new Offsets();
-Offsets::Process* p_process = new Offsets::Process();
-Offsets::ClientGame* p_cg = new Offsets::ClientGame();
-Offsets::Entity* p_entity = new Offsets::Entity;
-Offsets::Entity::Player* p_player = new Offsets::Entity::Player();
+Offsets::Process* oProcess = new Offsets::Process();
+Offsets::ClientGame* oClientGame = new Offsets::ClientGame();
+Offsets::Entity::Zombie* oZombie = new Offsets::Entity::Zombie;
+Offsets::Entity::Player* oPlayer = new Offsets::Entity::Player();

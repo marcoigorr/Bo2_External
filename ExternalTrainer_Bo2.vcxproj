@@ -147,6 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Addr.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
@@ -161,12 +162,15 @@
     <ClCompile Include="proc.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Addr.h" />
+    <ClInclude Include="DataTypes.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MemMan.h" />
     <ClInclude Include="Offsets.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="proc.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

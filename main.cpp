@@ -8,13 +8,23 @@
 #include "MemMan.h"
 #include "proc.h"
 #include "Options.h"
+using namespace Options;
 #include "Offsets.h"
+#include "Addr.h"
 #include "Menu.h"
+#include "DataTypes.h"
+
+#define aModuleBase addr->aModuleBase
+#define aLocalPlayer aProcess->aLocalPlayer
+#define aEntList aProcess->aEntList
+#define aClientGame aProcess->aClientGame
 
 
 int main(int, char**)
 {
-    // Setup window
+    MemMan mem;
+
+    /* ------- Setup menu window ------- */
     if (!glfwInit())
     {
         std::cout << "Failed to initialize glfw!\n";
@@ -66,26 +76,36 @@ int main(int, char**)
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
+    ImGui_ImplOpenGL3_Init(glsl_version);    
 
-    DWORD procId = GetProcId(L"plutonium - bootstrapper - win32.exe");
+    /* -- Wait for game window to appear -- */
+    HWND hGameWindow = NULL;
+    std::cout << "Waiting for \"plutonium-bootstrapper-win32.exe\" to be opened...\n";
+    while (hGameWindow == NULL)
+    {
+        hGameWindow = FindWindow(NULL, L"Call of Duty\xAE: Black Ops II - Zombies");
+    }
+    system("cls");
+    std::cout << "Process Found!\n";
+
+    DWORD procId = GetProcId(L"plutonium-bootstrapper-win32.exe");
     if (!procId)
     {
         std::cout << "\nProcess not found, press any key to exit";
         std::cin;
         return 0;
     }
-    
-    // Open Handle to process
+
     HANDLE hProcess = 0;
     hProcess = OpenProcess(PROCESS_ALL_ACCESS, NULL, procId);
 
-    // Get process's module base address 
-    uintptr_t aModuleBase = GetModuleBaseAddress64(procId);
+    aModuleBase = GetModuleBaseAddress64(procId); // 0x400000
 
-    uintptr_t aLocalPlayer = aModuleBase + p_process->local_player;
-    uintptr_t aEntList = aModuleBase + p_process->entity_list;
-    uintptr_t aClientGame = aModuleBase + p_process->client_game;
+    aLocalPlayer = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->local_player); // 0x023427A0
+    aEntList = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->entity_list); // 0x2330358
+    aClientGame = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->client_game); // 0x1AB10107
+
+    // std::cout << "0x" << std::hex << std::uppercase << aClientGame << std::endl;
 
     /* --------- Main Loop --------- */
     while (!glfwWindowShouldClose(window))
@@ -110,6 +130,17 @@ int main(int, char**)
             {
                 return 0;
             }
+        }
+
+        // Find Local Player again
+        aLocalPlayer = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->local_player); // 0x023427A0        
+
+        // Get View Matrix
+        ViewMatrix = mem.ReadMem<Matrix>(hProcess, aClientGame + (uintptr_t)&oClientGame->viewmatrix);
+
+        for (short int i = 0; i < 64; i++)
+        {
+            uintptr_t Entity = mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C);
         }
 
         updateMenu(window);

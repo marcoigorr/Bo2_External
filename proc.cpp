@@ -17,23 +17,22 @@ DWORD GetProcId(const wchar_t* procName)
 
 		if (!Process32First(hSnap, &procEntry))
 		{
-			std::cout << "Failed to retrieve information about the first process." << std::endl;
+			//std::cout << "Failed to retrieve information about the first process." << std::endl;
 			return procId;
 		}
-
+		
 		while (Process32Next(hSnap, &procEntry))
 		{
-			std::wcout << "\nProcess " << procEntry.th32ProcessID << ": " << procEntry.szExeFile;
+			//std::wcout << "\nProcess " << procEntry.th32ProcessID << ": " << procEntry.szExeFile;
 
 			if (!_wcsicmp(procEntry.szExeFile, procName))
 			{
-				std::cout << " <- Process Found!" << std::endl;
+				//std::cout << " <- Process Found!" << std::endl;
 				procId = procEntry.th32ProcessID;
 				break;
 			}
 		}
 	}
-	Sleep(500);
 	CloseHandle(hSnap);
 	return procId;
 }

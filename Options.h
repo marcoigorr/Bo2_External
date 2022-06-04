@@ -1,4 +1,5 @@
 #pragma once
+#include "DataTypes.h"
 
 namespace Options
 {
@@ -17,4 +18,7 @@ namespace Options
 
 	// recoil
 	extern bool bRecoil;
+
+	// matrix
+	extern Matrix ViewMatrix;
 }

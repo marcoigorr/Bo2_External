@@ -1,4 +1,5 @@
 #include "Options.h"
+#include "DataTypes.h"
 
 namespace Options
 {
@@ -18,4 +19,7 @@ namespace Options
 
 	// recoil
 	bool bRecoil = false;
+
+	// matrix
+	Matrix ViewMatrix;
 }

@@ -28,6 +28,12 @@
     <Filter Include="Menu">
       <UniqueIdentifier>{c152ec64-bc5c-4dd1-9a56-cd7ba2c7409f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Addr">
+      <UniqueIdentifier>{ce496af0-252b-4246-83c7-22f1c999d05b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{58fa1033-2a95-4e10-ade2-3aa571719a97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -66,6 +72,9 @@
     <ClCompile Include="Options.cpp">
       <Filter>Options</Filter>
     </ClCompile>
+    <ClCompile Include="Addr.cpp">
+      <Filter>Addr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="proc.h">
@@ -85,6 +94,15 @@
     </ClInclude>
     <ClInclude Include="Menu.h">
       <Filter>Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Addr.h">
+      <Filter>Addr</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTypes.h">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
