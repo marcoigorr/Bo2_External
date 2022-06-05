@@ -26,6 +26,8 @@ public:
 	class Entity
 	{
 	public:
+		uintptr_t entity;
+
 		class Zombie
 		{
 		public:
@@ -60,5 +62,6 @@ public:
 extern Addr* addr;
 extern Addr::Process* aProcess;
 extern Addr::ClientGame* aClientGame;
+extern Addr::Entity* aEntity;
 extern Addr::Entity::Zombie* aZombie;
 extern Addr::Entity::Player* aPlayer;

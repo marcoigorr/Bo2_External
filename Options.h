@@ -3,6 +3,7 @@
 
 namespace Options
 {
+	// menu
 	extern bool bMenu;
 
 	// health

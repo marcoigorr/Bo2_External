@@ -13,16 +13,30 @@ using namespace Options;
 #include "Addr.h"
 #include "Menu.h"
 #include "DataTypes.h"
+#include "Values.h"
+using namespace Values;
 
 #define aModuleBase addr->aModuleBase
 #define aLocalPlayer aProcess->aLocalPlayer
 #define aEntList aProcess->aEntList
 #define aClientGame aProcess->aClientGame
 
+#define entity aEntity->entity
+
 
 int main(int, char**)
 {
     MemMan mem;
+
+    /* -- Wait for game window -- */
+    HWND hGameWindow = NULL;
+    std::cout << "Waiting for \"plutonium-bootstrapper-win32.exe\" to be opened...\n";
+    while (hGameWindow == NULL)
+    {
+        hGameWindow = FindWindow(NULL, L"Call of Duty\xAE: Black Ops II - Zombies");
+    }
+    system("cls");
+    std::cout << "Process Found!\n";
 
     /* ------- Setup menu window ------- */
     if (!glfwInit())
@@ -78,16 +92,6 @@ int main(int, char**)
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);    
 
-    /* -- Wait for game window to appear -- */
-    HWND hGameWindow = NULL;
-    std::cout << "Waiting for \"plutonium-bootstrapper-win32.exe\" to be opened...\n";
-    while (hGameWindow == NULL)
-    {
-        hGameWindow = FindWindow(NULL, L"Call of Duty\xAE: Black Ops II - Zombies");
-    }
-    system("cls");
-    std::cout << "Process Found!\n";
-
     DWORD procId = GetProcId(L"plutonium-bootstrapper-win32.exe");
     if (!procId)
     {
@@ -105,7 +109,7 @@ int main(int, char**)
     aEntList = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->entity_list); // 0x2330358
     aClientGame = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->client_game); // 0x1AB10107
 
-    // std::cout << "0x" << std::hex << std::uppercase << aClientGame << std::endl;
+    // std::cout << std::hex << oZombie->health[0] << std::endl;
 
     /* --------- Main Loop --------- */
     while (!glfwWindowShouldClose(window))
@@ -130,6 +134,8 @@ int main(int, char**)
             {
                 return 0;
             }
+
+            ImGui::Text((std::to_string(entCount)).c_str());
         }
 
         // Find Local Player again
@@ -137,11 +143,18 @@ int main(int, char**)
 
         // Get View Matrix
         ViewMatrix = mem.ReadMem<Matrix>(hProcess, aClientGame + (uintptr_t)&oClientGame->viewmatrix);
-
-        for (short int i = 0; i < 64; i++)
+        
+        // Loop Through ent list (fisrt element is player)      
+        entCount = 0;
+        for (short int i = 1; mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C) != 0x0; i++)
         {
-            uintptr_t Entity = mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C);
-        }
+            entity = mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C);
+            // If current ent is alive ++
+            if (mem.ReadMem<int>(hProcess, entity + oZombie->health[0]) > 0)
+            {
+                entCount++;
+            }
+        }        
 
         updateMenu(window);
 

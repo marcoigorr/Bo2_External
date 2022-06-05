@@ -75,6 +75,9 @@
     <ClCompile Include="Addr.cpp">
       <Filter>Addr</Filter>
     </ClCompile>
+    <ClCompile Include="Values.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="proc.h">
@@ -102,6 +105,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="DataTypes.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Values.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
