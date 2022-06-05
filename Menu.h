@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <GLFW/glfw3.h>
+#include "Options.h"
 
 void updateMenu(GLFWwindow* window)
 {
@@ -12,5 +13,4 @@ void updateMenu(GLFWwindow* window)
 	{
 		glfwSetWindowAttrib(window, GLFW_MOUSE_PASSTHROUGH, true);
 	}
-	
 }

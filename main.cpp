@@ -7,13 +7,15 @@
 #include <GLFW/glfw3.h>
 #include "MemMan.h"
 #include "proc.h"
+#include "utils.h"
+#include "Menu.h"
 #include "Options.h"
 using namespace Options;
 #include "Offsets.h"
 #include "Addr.h"
-#include "Menu.h"
-#include "DataTypes.h"
 #include "Values.h"
+#include "DataTypes.h"
+
 using namespace Values;
 
 #define aModuleBase addr->aModuleBase
@@ -117,44 +119,66 @@ int main(int, char**)
         glfwPollEvents();
 
         // Start the Dear ImGui frame
+        glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        
 
         // Menu overlay show/hide
         if (GetAsyncKeyState(VK_INSERT) & 1)
         {
-            Options::bMenu = !Options::bMenu;            
+            bMenu = !bMenu;            
         }
 
         // Draw here
-        if (Options::bMenu)
+        if (bMenu)
         {
             if (ImGui::Button("Exit"))
             {
                 return 0;
             }
 
+            if (ImGui::Button("ESP"))
+            {
+                bESP = !bESP;
+            }
+
             ImGui::Text((std::to_string(entCount)).c_str());
         }
 
-        // Find Local Player again
-        aLocalPlayer = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->local_player); // 0x023427A0        
-
-        // Get View Matrix
-        ViewMatrix = mem.ReadMem<Matrix>(hProcess, aClientGame + (uintptr_t)&oClientGame->viewmatrix);
-        
-        // Loop Through ent list (fisrt element is player)      
-        entCount = 0;
-        for (short int i = 1; mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C) != 0x0; i++)
+        // ESP
+        if (bESP) 
         {
-            entity = mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C);
-            // If current ent is alive ++
-            if (mem.ReadMem<int>(hProcess, entity + oZombie->health[0]) > 0)
+            // Find Local Player again
+            aLocalPlayer = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->local_player); // 0x023427A0        
+
+            // Get View Matrix
+            ViewMatrix = mem.ReadMem<Matrix>(hProcess, aClientGame + oClientGame->viewmatrix[0]);
+
+            // Loop Through ent list (fisrt element is player)      
+            entCount = 0;
+            for (short int i = 1; mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C) != 0x0; i++)
             {
+                entity = mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C);
+
+                // If current ent is not alive restart
+                if (mem.ReadMem<int>(hProcess, entity + oZombie->health[0]) <= 0) continue;
                 entCount++;
+
+                entLocation = mem.ReadMem<Vec3>(hProcess, entity + oZombie->vecOrigin[0]);
+
+                Vec2 ScreenCoords;
+
+                if (!WorldToScreen(entLocation, ScreenCoords, ViewMatrix.matrix)) continue;
+
+                glBegin(GL_LINES);
+                glVertex2d(0.0f, -1.0f);
+                glVertex2d(ScreenCoords.X, ScreenCoords.Y);
+                glEnd();
             }
-        }        
+        }
+        
 
         updateMenu(window);
 
@@ -163,7 +187,6 @@ int main(int, char**)
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);

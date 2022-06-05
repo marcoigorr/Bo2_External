@@ -31,7 +31,7 @@ public:
 		class Zombie
 		{
 		public:
-			uintptr_t pos;
+			uintptr_t vecOrigin;
 			uintptr_t health;
 			uintptr_t healthMax;
 		};		

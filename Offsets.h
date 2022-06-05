@@ -9,7 +9,7 @@ public:
 	class Process 
 	{
 	public:
-		uintptr_t client_game = 0x0103AC50;
+		uintptr_t client_game = 0x159D34;
 		uintptr_t local_player = 0x1D88290;
 		uintptr_t entity_list = 0x01F387A8;
 	};
@@ -17,7 +17,7 @@ public:
 	class ClientGame
 	{
 	public:
-		std::vector<unsigned int> viewmatrix = { 0x128 };
+		std::vector<unsigned int> viewmatrix = { 0xf0 };
 	};
 
 	class Entity 
@@ -26,7 +26,7 @@ public:
 		class Zombie // moduleBase + entity_list
 		{
 		public:
-			std::vector<unsigned int> pos = { 0x18 };
+			std::vector<unsigned int> vecOrigin = { 0x18 };
 			std::vector<unsigned int> health = { 0x1A8 };
 			std::vector<unsigned int> healthMax = { 0x1AC };
 		};	

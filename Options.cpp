@@ -20,6 +20,9 @@ namespace Options
 	// recoil
 	bool bRecoil = false;
 
+	// ESP
+	bool bESP = false;
+
 	// matrix
 	Matrix ViewMatrix;
 }

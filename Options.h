@@ -20,6 +20,9 @@ namespace Options
 	// recoil
 	extern bool bRecoil;
 
+	// ESP
+	extern bool bESP;
+
 	// matrix
 	extern Matrix ViewMatrix;
 }
