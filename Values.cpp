@@ -11,7 +11,7 @@ namespace Values
 	int windowHeight;
 
 	//SnapLines
-	Vec2 lineOrigin;
+	Vec2 lineOrigin = Vec2(0.0f, -1.0f);
 
 	// Cheat values
 	Matrix ViewMatrix;

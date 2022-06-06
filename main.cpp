@@ -140,19 +140,21 @@ int main(int, char**)
 
             switch (tab)
             {
-            case 1:
+            case 1: // ESP
                 ImGui::SetCursorPos(ImVec2(30, 100));
                 ImGui::Checkbox("Active", &bESP);
+                ImGui::SetCursorPos(ImVec2(30, 130));
+                ImGui::Checkbox("Snap Lines", &bSnapLines);
                 break;
-            case 2:
+            case 2: // Rapid Fire
                 ImGui::SetCursorPos(ImVec2(30, 100));
                 ImGui::Checkbox("Active", &bFireRate);
                 break;
-            case 3:
+            case 3: // Recoil
                 ImGui::SetCursorPos(ImVec2(30, 100));
                 ImGui::Checkbox("Active", &bRecoil);
                 break;
-            case 4:
+            case 4: // Misc (god mode, unlim ammo)
                 ImGui::SetCursorPos(ImVec2(30, 100));
                 ImGui::Checkbox("God Mode", &bHealth);
                 ImGui::SetCursorPos(ImVec2(30, 130)); 
@@ -160,7 +162,7 @@ int main(int, char**)
                 ImGui::SetCursorPos(ImVec2(30, 160));
                 ImGui::SliderInt("Ammo Value", &iAmmo, 0, 1337);                
                 break;
-            case 5:
+            case 5: // Exit
                 ImGui::SetCursorPos(ImVec2((menuW / 2) - 100, (menuH / 2) - 25));
                 if(ImGui::Button("Terminate Cheats", ImVec2(200, 50))) return 0;
                 break;
