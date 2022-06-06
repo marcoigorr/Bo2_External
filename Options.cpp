@@ -1,5 +1,4 @@
 #include "Options.h"
-#include "DataTypes.h"
 
 namespace Options
 {
@@ -21,8 +20,6 @@ namespace Options
 	bool bRecoil = false;
 
 	// ESP
-	bool bESP = false;
-
-	// matrix
-	Matrix ViewMatrix;
+	bool bESP = false;	
+	bool bSnapLines = false;
 }

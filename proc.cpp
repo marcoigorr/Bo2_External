@@ -1,6 +1,4 @@
-#include "stdafx.h"
 #include "proc.h"
-
 
 DWORD GetProcId(const wchar_t* procName)
 {
@@ -88,6 +86,18 @@ uintptr_t FindDMAAddy(HANDLE hProc, uintptr_t ptr, std::vector<unsigned int> off
 	return addr;
 }
 
+int GetProcInfo()
+{
+	Values::procId = GetProcId(L"plutonium-bootstrapper-win32.exe");
+	if (!Values::procId)
+	{
+		std::cout << "\nProcess not found";
+		return 0;
+	}
+
+	Values::hProcess = OpenProcess(PROCESS_ALL_ACCESS, NULL, Values::procId);
+	return 1;
+}
 
 /*
 void WriteToMemory(HANDLE hProcess, uintptr_t moduleBaseAddr, uintptr_t playerPtrBase, bool bHealth, bool bAmmo, bool bFireRate, bool bRecoil, PlayerAddr *_pAddrPtr)

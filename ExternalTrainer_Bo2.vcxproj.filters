@@ -25,9 +25,6 @@
     <Filter Include="Options">
       <UniqueIdentifier>{9b722f15-7eba-4329-a13b-fe40a78618eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Menu">
-      <UniqueIdentifier>{c152ec64-bc5c-4dd1-9a56-cd7ba2c7409f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Addr">
       <UniqueIdentifier>{ce496af0-252b-4246-83c7-22f1c999d05b}</UniqueIdentifier>
     </Filter>
@@ -78,6 +75,9 @@
     <ClCompile Include="Values.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="proc.h">
@@ -94,9 +94,6 @@
     </ClInclude>
     <ClInclude Include="Offsets.h">
       <Filter>Options</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.h">
-      <Filter>Menu</Filter>
     </ClInclude>
     <ClInclude Include="Addr.h">
       <Filter>Addr</Filter>

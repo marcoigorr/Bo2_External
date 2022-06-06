@@ -1,23 +1,19 @@
 #pragma once
-#include <basetsd.h>
 #include <string>
-#include "Offsets.h"
-#include "MemMan.h"
 
 class Addr
 {
 public:
-	uintptr_t aModuleBase;
-
 	class Process
 	{
 	public:
+		uintptr_t aModuleBase;
 		uintptr_t aLocalPlayer;
 		uintptr_t aEntList;
 		uintptr_t aClientGame;
 	};
 
-	class ClientGame
+	class CG
 	{
 	public:
 		uintptr_t viewmatrix;
@@ -61,7 +57,7 @@ public:
 
 extern Addr* addr;
 extern Addr::Process* aProcess;
-extern Addr::ClientGame* aClientGame;
+extern Addr::CG* aCG;
 extern Addr::Entity* aEntity;
 extern Addr::Entity::Zombie* aZombie;
 extern Addr::Entity::Player* aPlayer;

@@ -22,7 +22,5 @@ namespace Options
 
 	// ESP
 	extern bool bESP;
-
-	// matrix
-	extern Matrix ViewMatrix;
+	extern bool bSnapLines;
 }

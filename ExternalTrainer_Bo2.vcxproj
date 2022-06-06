@@ -160,12 +160,12 @@
     <ClCompile Include="Offsets.cpp" />
     <ClCompile Include="Options.cpp" />
     <ClCompile Include="proc.cpp" />
+    <ClCompile Include="utils.cpp" />
     <ClCompile Include="Values.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Addr.h" />
     <ClInclude Include="DataTypes.h" />
-    <ClInclude Include="Menu.h" />
     <ClInclude Include="MemMan.h" />
     <ClInclude Include="Offsets.h" />
     <ClInclude Include="Options.h" />

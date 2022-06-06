@@ -14,7 +14,7 @@ public:
 		uintptr_t entity_list = 0x01F387A8;
 	};
 
-	class ClientGame
+	class CG
 	{
 	public:
 		std::vector<unsigned int> viewmatrix = { 0xf0 };
@@ -58,6 +58,6 @@ public:
 
 extern Offsets* offsets;
 extern Offsets::Process* oProcess;
-extern Offsets::ClientGame* oClientGame;
+extern Offsets::CG* oCG;
 extern Offsets::Entity::Zombie* oZombie;
 extern Offsets::Entity::Player* oPlayer;
