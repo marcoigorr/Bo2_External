@@ -7,6 +7,8 @@
 #include "Values.h"
 #include "Addr.h"
 
+void GetGameAddr();
+
 void updateMenu(GLFWwindow* window);
 
 void DrawLine(Vec2& start, Vec2& end);

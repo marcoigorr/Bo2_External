@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include "DataTypes.h"
+#include "imgui/imgui.h"
 
 namespace Values
 {
@@ -18,5 +19,17 @@ namespace Values
 	// Cheat values
 	extern Matrix ViewMatrix;
 	extern int entCount;	
+}
+
+namespace Colors
+{
+	// Color define
+	extern ImColor white;
+	extern ImColor light_grey;
+	extern ImColor light_dark_grey;
+	extern ImColor blue;
+
+	extern ImVec4 active;
+	extern ImVec4 inactive;
 }
 

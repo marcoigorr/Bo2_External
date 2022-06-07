@@ -9,11 +9,34 @@ using namespace Options;
 #define aClientGame aProcess->aClientGame
 #define entity aEntity->entity
 
+void GetGameAddr()
+{
+	aPlayer->ammo1 = aLocalPlayer + oPlayer->ammo1[0];
+	aPlayer->ammo2 = aLocalPlayer + oPlayer->ammo2[0];
+	aPlayer->ammo3 = aLocalPlayer + oPlayer->ammo3[0];
+	aPlayer->ammo4 = aLocalPlayer + oPlayer->ammo4[0];
+	aPlayer->ammo5 = aLocalPlayer + oPlayer->ammo5[0];
+	aPlayer->points = aLocalPlayer + oPlayer->points[0];
+	aPlayer->crosshair = aLocalPlayer + oPlayer->crosshair[0];
+}
 
 /* ----------- ImGui Menu ----------- */
 void updateMenu(GLFWwindow* window)
 {
 	MemMan mem;
+
+	// Calculate Process Addresses
+	aLocalPlayer = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->local_player); // 0x023427A0
+	aEntList = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->entity_list); // 0x2330358
+	aClientGame = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->client_game); // 0x1AB10107	
+	
+	GetGameAddr();
+
+	if (bCalcAddr)
+	{
+		bCalcAddr = false;
+		GetGameAddr();
+	}
 
 	if (bMenu)
 	{
@@ -51,6 +74,85 @@ void updateMenu(GLFWwindow* window)
 				DrawLine(lineOrigin, ScreenCoords);
 			}
 		}
+	}
+
+	// --- FireRate
+	if (bFireRate)
+	{
+		// 90 = nop
+		mem.NopEx((BYTE*)(aModuleBase + 0x54B4CA), 2, hProcess);
+	}
+	else
+	{
+		// 89 03 = mov [ebx],eax
+		mem.PatchEx((BYTE*)(aModuleBase + 0x54B4CA), (BYTE*)("\x89\x03"), 2, hProcess);
+	}
+
+	// Recoil not so recoil
+	if (bRecoil)
+	{
+		// Cursor size increment nop //
+		int crossHairSize = 0;
+
+		// F3 0F11 8E 88050000 - movss [esi+00000588],xmm1 (general)
+		mem.NopEx((BYTE*)(aModuleBase + 0x1BB552), 8, hProcess);
+
+		// F3 0F11 86 88050000 - movss [esi+00000588],xmm0 (shooting)
+		mem.NopEx((BYTE*)(aModuleBase + 0x54B8F5), 8, hProcess);
+
+		// F3 0F11 86 88050000 - movss [esi+00000588],xmm0 (hit)
+		mem.NopEx((BYTE*)(aModuleBase + 0x2675E5), 8, hProcess);
+
+		// D9 96 88050000 - fst dword ptr [esi+00000588] (jump)
+		mem.NopEx((BYTE*)(aModuleBase + 0x53B702), 6, hProcess);
+
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->crosshair, &crossHairSize, sizeof(crossHairSize), nullptr);
+
+		// Animation nop //
+
+		// 89 96 80050000 - mov[esi + 00000580], edx (gun shooting animation)
+		mem.NopEx((BYTE*)(aModuleBase + 0x54B8A7), 6, hProcess);
+	}
+	else
+	{
+		// Cursor size op restore
+		mem.PatchEx((BYTE*)(aModuleBase + 0x1BB552), (BYTE*)("\xF3\x0F\x11\x8E\x88\x05\x00\x00"), 8, hProcess);
+		mem.PatchEx((BYTE*)(aModuleBase + 0x54B8F5), (BYTE*)("\xF3\x0F\x11\x86\x88\x05\x00\x00"), 8, hProcess);
+		mem.PatchEx((BYTE*)(aModuleBase + 0x2675E5), (BYTE*)("\xF3\x0F\x11\x86\x88\x05\x00\x00"), 8, hProcess);
+		mem.PatchEx((BYTE*)(aModuleBase + 0x53B702), (BYTE*)("\xD9\x96\x88\x05\x00\x00"), 6, hProcess);
+		// Animation restore
+		mem.PatchEx((BYTE*)(aModuleBase + 0x54B8A7), (BYTE*)("\x89\x96\x80\x05\x00\x00"), 6, hProcess);
+	}
+
+	// Health
+	if (bHealth)
+	{
+		// 01 B7 A8010000 = add [edi+000001A8],esi
+		mem.PatchEx((BYTE*)(aModuleBase + 0x429E69), (BYTE*)("\x01\xB7\xA8\x01\x00\x00"), 6, hProcess);
+	}
+	else
+	{
+		// 29 B7 A8010000 = sub [edi+000001A8],esi     
+		mem.PatchEx((BYTE*)(aModuleBase + 0x429E69), (BYTE*)("\x29\xB7\xA8\x01\x00\x00"), 6, hProcess);
+	}
+
+	// --- Points
+	if (bPoints)
+	{		
+		bPoints = false;
+		int newPonts = mem.ReadMem<int>(hProcess, aPlayer->points) + iPoints;
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->points, &newPonts, sizeof(newPonts), nullptr);
+	}
+
+	// Ammo
+	if (bAmmo)
+	{
+		//Write to memory ammo
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->ammo1, &iAmmo, sizeof(iAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->ammo2, &iAmmo, sizeof(iAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->ammo3, &iAmmo, sizeof(iAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->ammo4, &iAmmo, sizeof(iAmmo), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->ammo5, &iAmmo, sizeof(iAmmo), nullptr);		
 	}
 }
 

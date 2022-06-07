@@ -3,6 +3,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "imgui/imgui_internal.h"
 #include <iostream>
 #include <GLFW/glfw3.h> // sorry rake, next time i will make it with DirectX
 #include "proc.h"
@@ -13,6 +14,7 @@ using namespace Options;
 #include "Addr.h"
 #include "Values.h"
 using namespace Values;
+using namespace Colors;
 #include "DataTypes.h"
 
 #define aModuleBase aProcess->aModuleBase
@@ -20,11 +22,25 @@ using namespace Values;
 #define aEntList aProcess->aEntList
 #define aClientGame aProcess->aClientGame
 
+void SetStyle()
+{
+    ImGuiStyle& style = ImGui::GetStyle();
+
+    style.WindowMinSize = ImVec2(835.0f, 500.0f);       
+
+    style.Colors[ImGuiCol_Border] = blue;
+    style.Colors[ImGuiCol_WindowBg] = light_grey;
+    style.Colors[ImGuiCol_ChildBg] = light_dark_grey;
+    style.Colors[ImGuiCol_Text] = white;
+    style.Colors[ImGuiCol_CheckMark] = white;
+    style.Colors[ImGuiCol_ButtonHovered] = blue;
+}
+
 int main(int, char**)
 {
     /* ------- Wait for game window ------- */
     HWND hGameWindow = NULL;
-    std::cout << "Waiting for \"plutonium-bootstrapper-win32.exe\" to be opened...\n";
+    std::cout << "Waiting for Call of Duty\xAE: Black Ops II - Zombies to be opened...\n";
     while (hGameWindow == NULL)
     {
         hGameWindow = FindWindow(NULL, L"Call of Duty\xAE: Black Ops II - Zombies");
@@ -62,7 +78,7 @@ int main(int, char**)
     GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Hello World", NULL, NULL);
     if (window == NULL) return 1;
     
-    ShowWindow(GetConsoleWindow(), SW_HIDE); // Hide console
+    ShowWindow(GetConsoleWindow(), SW_SHOW); // Hide console
 
     glfwSetWindowAttrib(window, GLFW_DECORATED, false);
     glfwMakeContextCurrent(window);
@@ -81,15 +97,11 @@ int main(int, char**)
     io.IniFilename = nullptr;
     io.LogFilename = nullptr;
     io.WantSaveIniSettings = false;
-    io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 18.0f);
+    io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\Tahoma.ttf", 20.0f);
 
     // Setup Dear ImGui style    
-    static int tab = 0;
-    static ImVec2 tabBtnSize = ImVec2(150, 40);
-
-    static float menuW = 820.0f, menuH = 500.0f;
-    ImGui::StyleColorsDark();   
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, { menuW, menuH });    
+    SetStyle();
+    ImVec2 tabBtnSize = ImVec2(150, 58);
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -98,14 +110,9 @@ int main(int, char**)
     // Get procId and handle
     if (!GetProcInfo())
         return 0;
-
-    // Calculate Process Addresses
-    MemMan mem;
-
-    aModuleBase = GetModuleBaseAddress64(procId); // 0x400000
-    aLocalPlayer = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->local_player); // 0x023427A0
-    aEntList = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->entity_list); // 0x2330358
-    aClientGame = mem.ReadMem<uintptr_t>(hProcess, aModuleBase + oProcess->client_game); // 0x1AB10107
+        
+    // Get Module base address of process
+    aModuleBase = GetModuleBaseAddress64(procId); // 0x400000   
 
     /* --------- Main Loop --------- */
     while (!glfwWindowShouldClose(window))
@@ -116,7 +123,16 @@ int main(int, char**)
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();    
+        ImGui::NewFrame();  
+
+        std::vector<const char*> tabs = {
+            "Info & Conf",
+            "ESP",
+            "Rapid Fire",
+            "No Recoil",
+            "Misc"            
+        };
+        static int tab = 0;
 
         // Menu overlay show/hide
         if (GetAsyncKeyState(VK_INSERT) & 1)
@@ -127,46 +143,69 @@ int main(int, char**)
         // Draw here
         if (bMenu)
         {
-            ImGui::SameLine();
-            if (ImGui::Button("ESP", tabBtnSize)) tab = 1;
-            ImGui::SameLine();
-            if (ImGui::Button("Rapid Fire", tabBtnSize)) tab = 2;
-            ImGui::SameLine();
-            if (ImGui::Button("No Recoil", tabBtnSize)) tab = 3;
-            ImGui::SameLine();
-            if (ImGui::Button("Misc", tabBtnSize)) tab = 4;
-            ImGui::SameLine();
-            if (ImGui::Button("Configuration", tabBtnSize)) tab = 5;
-
-            switch (tab)
-            {
-            case 1: // ESP
-                ImGui::SetCursorPos(ImVec2(30, 100));
-                ImGui::Checkbox("Active", &bESP);
-                ImGui::SetCursorPos(ImVec2(30, 130));
-                ImGui::Checkbox("Snap Lines", &bSnapLines);
-                break;
-            case 2: // Rapid Fire
-                ImGui::SetCursorPos(ImVec2(30, 100));
-                ImGui::Checkbox("Active", &bFireRate);
-                break;
-            case 3: // Recoil
-                ImGui::SetCursorPos(ImVec2(30, 100));
-                ImGui::Checkbox("Active", &bRecoil);
-                break;
-            case 4: // Misc (god mode, unlim ammo)
-                ImGui::SetCursorPos(ImVec2(30, 100));
-                ImGui::Checkbox("God Mode", &bHealth);
-                ImGui::SetCursorPos(ImVec2(30, 130)); 
-                ImGui::Checkbox("Unlimited Ammo", &bAmmo);
-                ImGui::SetCursorPos(ImVec2(30, 160));
-                ImGui::SliderInt("Ammo Value", &iAmmo, 0, 1337);                
-                break;
-            case 5: // Exit
-                ImGui::SetCursorPos(ImVec2((menuW / 2) - 100, (menuH / 2) - 25));
-                if(ImGui::Button("Terminate Cheats", ImVec2(200, 50))) return 0;
-                break;
+            ImGui::Begin("Bo2", 0, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+            
+            // --- Upper Section
+            ImGui::BeginChild("##Upper_Section", ImVec2(ImGui::GetContentRegionAvail().x, 75), true);
+            {    
+                for (int i = 0; i < tabs.size(); i++)
+                {
+                    ImGui::SameLine();
+                    ImGui::PushStyleColor(ImGuiCol_Button, tab == i ? active : inactive);
+                    if (ImGui::Button(tabs[i], tabBtnSize))
+                        tab = i;
+                }
+                ImGui::PopStyleColor(tabs.size());                
             }
+            ImGui::EndChild();
+
+            // --- Lower Section
+            ImGui::BeginChild("##Lower_Section", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), true);
+            {
+                switch (tab)
+                {
+                case 0: // Configuration
+                    ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2 - ImGui::CalcTextSize("Call of Duty\xAE: Black Ops II - Zombies").x / 2, 30));
+                    ImGui::TextColored(ImVec4(0,255,0,255), "Call of Duty\xAE: Black Ops II - Zombies");
+
+                    ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionMax().x / 2 - (200 / 2), ImGui::GetContentRegionMax().y - 150));
+                    if (ImGui::Button("Recalculate Addresses", ImVec2(200, 50)))
+                        bCalcAddr = true;
+                    ImGui::SetCursorPos(ImVec2(18, ImGui::GetContentRegionMax().y - 75));
+                    if (ImGui::Button("Terminate Cheats", ImVec2(ImGui::GetContentRegionAvail().x - 10, 50)))
+                        return 0;
+                    break;
+                case 1: // ESP
+                    ImGui::Spacing();
+                    ImGui::Checkbox(" Active", &bESP);
+                    ImGui::Spacing();
+                    ImGui::Checkbox(" Snaplines", &bSnapLines);
+                    break;
+                case 2: // Rapid Fire
+                    ImGui::Checkbox(" Active", &bFireRate);
+                    break;
+                case 3: // No Recoil
+                    ImGui::Checkbox(" Active", &bRecoil);
+                    break;
+                case 4: // Misc
+                    ImGui::Spacing();
+                    ImGui::Checkbox(" God Mode", &bHealth);
+                    ImGui::Spacing();
+                    ImGui::Checkbox("Unlimited Ammo", &bAmmo);
+      
+                    ImGui::Spacing();
+                    ImGui::SliderInt(" Points amount", &iPoints, 10, 5000);
+                    if (ImGui::Button(" Add Points"))
+                    { 
+                        bPoints = true;
+                    }
+                    
+                    break;                
+                }
+            }
+            ImGui::EndChild();
+
+            ImGui::End();
         }
 
         updateMenu(window);

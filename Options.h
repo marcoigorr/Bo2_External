@@ -3,12 +3,18 @@
 
 namespace Options
 {
+	extern bool bCalcAddr;
+
 	// menu
 	extern bool bMenu;
 
 	// health
 	extern bool bHealth;
 	extern int health;
+
+	// points
+	extern bool bPoints;
+	extern int iPoints;
 
 	// ammo
 	extern bool bAmmo;
