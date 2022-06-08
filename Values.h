@@ -18,7 +18,6 @@ namespace Values
 
 	// Cheat values
 	extern Matrix ViewMatrix;
-	extern int entCount;	
 }
 
 namespace Colors

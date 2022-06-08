@@ -9,13 +9,20 @@ using namespace Options;
 #define aClientGame aProcess->aClientGame
 #define entity aEntity->entity
 
+// plutonium-bootstrapper-win32.exe+40F64D - F3 A5 - repe movsd (strange fire glitch) 
+
 void GetGameAddr()
 {
+	aPlayer->speed = aLocalPlayer + oPlayer->speed[0];
+	aPlayer->gravity = aLocalPlayer + oPlayer->gravity[0];
+	aPlayer->mag1 = aLocalPlayer + oPlayer->mag1[0];
+	aPlayer->mag2 = aLocalPlayer + oPlayer->mag2[0];
 	aPlayer->ammo1 = aLocalPlayer + oPlayer->ammo1[0];
 	aPlayer->ammo2 = aLocalPlayer + oPlayer->ammo2[0];
 	aPlayer->ammo3 = aLocalPlayer + oPlayer->ammo3[0];
 	aPlayer->ammo4 = aLocalPlayer + oPlayer->ammo4[0];
-	aPlayer->ammo5 = aLocalPlayer + oPlayer->ammo5[0];
+	aPlayer->grenade1 = aLocalPlayer + oPlayer->grenade1[0];
+	aPlayer->grenade2 = aLocalPlayer + oPlayer->grenade2[0];
 	aPlayer->points = aLocalPlayer + oPlayer->points[0];
 	aPlayer->crosshair = aLocalPlayer + oPlayer->crosshair[0];
 }
@@ -38,6 +45,7 @@ void updateMenu(GLFWwindow* window)
 		GetGameAddr();
 	}
 
+	// ImGui menu
 	if (bMenu)
 	{
 		glfwSetWindowAttrib(window, GLFW_MOUSE_PASSTHROUGH, false);
@@ -48,19 +56,19 @@ void updateMenu(GLFWwindow* window)
 	}
 
 	// --- ESP 
-	if (bESP)
+	if (bESP || bZombieCounter)
 	{
 		ViewMatrix = mem.ReadMem<Matrix>(hProcess, aClientGame + oCG->viewmatrix[0]);
 
 		// Loop Through ent list (fisrt element is player)      
-		entCount = 0;
+		iZombieCount = 0;
 		for (short int i = 1; mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C) != 0x0; i++)
 		{
 			entity = mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C);
 
 			// If current ent is not alive restart
 			if (mem.ReadMem<int>(hProcess, entity + oZombie->health[0]) <= 0) continue;
-			entCount++;
+			iZombieCount++;
 
 			// Snap Lines
 			if (bSnapLines)
@@ -88,7 +96,7 @@ void updateMenu(GLFWwindow* window)
 		mem.PatchEx((BYTE*)(aModuleBase + 0x54B4CA), (BYTE*)("\x89\x03"), 2, hProcess);
 	}
 
-	// Recoil not so recoil
+	// --- Recoil not so recoil
 	if (bRecoil)
 	{
 		// Cursor size increment nop //
@@ -124,7 +132,7 @@ void updateMenu(GLFWwindow* window)
 		mem.PatchEx((BYTE*)(aModuleBase + 0x54B8A7), (BYTE*)("\x89\x96\x80\x05\x00\x00"), 6, hProcess);
 	}
 
-	// Health
+	// --- Health
 	if (bHealth)
 	{
 		// 01 B7 A8010000 = add [edi+000001A8],esi
@@ -136,6 +144,18 @@ void updateMenu(GLFWwindow* window)
 		mem.PatchEx((BYTE*)(aModuleBase + 0x429E69), (BYTE*)("\x29\xB7\xA8\x01\x00\x00"), 6, hProcess);
 	}
 
+	// --- Speed
+	if (bSpeedHack)
+	{
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->speed, &iSpeed, sizeof(iSpeed), nullptr);
+		mem.NopEx((BYTE*)(aModuleBase + 0x34EE1), 6, hProcess);
+	}
+	else
+	{
+		// 89 85 94000000 = mov [ebp+00000094],eax (nop this and set aLocalPlayer + 0x94 with the desired speed)
+		mem.PatchEx((BYTE*)(aModuleBase + 0x34EE1), (BYTE*)("\x89\x85\x94\x00\x00\x00"), 6, hProcess);
+	}
+
 	// --- Points
 	if (bPoints)
 	{		
@@ -143,8 +163,20 @@ void updateMenu(GLFWwindow* window)
 		int newPonts = mem.ReadMem<int>(hProcess, aPlayer->points) + iPoints;
 		WriteProcessMemory(hProcess, (BYTE*)aPlayer->points, &newPonts, sizeof(newPonts), nullptr);
 	}
+	if (bFreezePoints)
+	{
+		mem.NopEx((BYTE*)(aModuleBase + 0x41FC18), 6, hProcess);
+		mem.NopEx((BYTE*)(aModuleBase + 0x41FBE5), 6, hProcess);
+	}
+	else
+	{
+		// 41FC18 - 89 B3 C8550000 = mov [ebx+000055C8],esi
+		mem.PatchEx((BYTE*)(aModuleBase + 0x41FC18), (BYTE*)("\x89\xB3\xC8\x55\x00\x00"), 6, hProcess);
+		// 89 B8 D8000000 = mov [eax+000000D8],edi
+		mem.PatchEx((BYTE*)(aModuleBase + 0x41FBE5), (BYTE*)("\x89\xB8\xD8\x00\x00\x00"), 6, hProcess);
+	}
 
-	// Ammo
+	// --- Ammo
 	if (bAmmo)
 	{
 		//Write to memory ammo
@@ -152,7 +184,21 @@ void updateMenu(GLFWwindow* window)
 		WriteProcessMemory(hProcess, (BYTE*)aPlayer->ammo2, &iAmmo, sizeof(iAmmo), nullptr);
 		WriteProcessMemory(hProcess, (BYTE*)aPlayer->ammo3, &iAmmo, sizeof(iAmmo), nullptr);
 		WriteProcessMemory(hProcess, (BYTE*)aPlayer->ammo4, &iAmmo, sizeof(iAmmo), nullptr);
-		WriteProcessMemory(hProcess, (BYTE*)aPlayer->ammo5, &iAmmo, sizeof(iAmmo), nullptr);		
+
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->grenade1, &iGrenade, sizeof(iGrenade), nullptr);
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->grenade2, &iGrenade, sizeof(iGrenade), nullptr);
+	}
+
+	// --- Gravity (player)
+	if (bGravity)
+	{		
+		WriteProcessMemory(hProcess, (BYTE*)aPlayer->gravity, &iGravity, sizeof(iGravity), nullptr);
+		mem.NopEx((BYTE*)(aModuleBase + 0x16CC86), 6, hProcess);
+	}
+	else
+	{
+		// 89 85 8C000000 = mov[ebp+0000008C],eax
+		mem.PatchEx((BYTE*)(aModuleBase + 0x16CC86), (BYTE*)("\x89\x85\x8C\x00\x00\x00"), 6, hProcess);
 	}
 }
 

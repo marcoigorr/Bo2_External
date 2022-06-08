@@ -37,6 +37,9 @@ public:
 		public:
 			uintptr_t name;
 
+			uintptr_t speed;
+			uintptr_t gravity;
+
 			uintptr_t health;
 			uintptr_t healthMax;
 
@@ -47,8 +50,8 @@ public:
 			uintptr_t ammo2;
 			uintptr_t ammo3;
 			uintptr_t ammo4;
-			uintptr_t ammo5;
 			uintptr_t grenade1;
+			uintptr_t grenade2;
 
 			uintptr_t crosshair;
 		};

@@ -26,7 +26,7 @@ void SetStyle()
 {
     ImGuiStyle& style = ImGui::GetStyle();
 
-    style.WindowMinSize = ImVec2(835.0f, 500.0f);       
+    style.WindowMinSize = ImVec2(1000.0f, 700.0f);       
 
     style.Colors[ImGuiCol_Border] = blue;
     style.Colors[ImGuiCol_WindowBg] = light_grey;
@@ -34,6 +34,11 @@ void SetStyle()
     style.Colors[ImGuiCol_Text] = white;
     style.Colors[ImGuiCol_CheckMark] = white;
     style.Colors[ImGuiCol_ButtonHovered] = blue;
+}
+
+void NextItemPadding(int padding_x = 20, int padding_y = 0)
+{
+    ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + padding_x, ImGui::GetCursorPos().y + padding_y));
 }
 
 int main(int, char**)
@@ -78,7 +83,7 @@ int main(int, char**)
     GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Hello World", NULL, NULL);
     if (window == NULL) return 1;
     
-    ShowWindow(GetConsoleWindow(), SW_SHOW); // Hide console
+    ShowWindow(GetConsoleWindow(), SW_HIDE); // Hide console
 
     glfwSetWindowAttrib(window, GLFW_DECORATED, false);
     glfwMakeContextCurrent(window);
@@ -137,7 +142,7 @@ int main(int, char**)
         // Menu overlay show/hide
         if (GetAsyncKeyState(VK_INSERT) & 1)
         {
-            bMenu = !bMenu;            
+            bMenu = !bMenu; 
         }
 
         // Draw here
@@ -148,7 +153,7 @@ int main(int, char**)
             // --- Upper Section
             ImGui::BeginChild("##Upper_Section", ImVec2(ImGui::GetContentRegionAvail().x, 75), true);
             {    
-                for (int i = 0; i < tabs.size(); i++)
+                for (unsigned int i = 0; i < tabs.size(); i++)
                 {
                     ImGui::SameLine();
                     ImGui::PushStyleColor(ImGuiCol_Button, tab == i ? active : inactive);
@@ -168,38 +173,121 @@ int main(int, char**)
                     ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2 - ImGui::CalcTextSize("Call of Duty\xAE: Black Ops II - Zombies").x / 2, 30));
                     ImGui::TextColored(ImVec4(0,255,0,255), "Call of Duty\xAE: Black Ops II - Zombies");
 
-                    ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionMax().x / 2 - (200 / 2), ImGui::GetContentRegionMax().y - 150));
-                    if (ImGui::Button("Recalculate Addresses", ImVec2(200, 50)))
-                        bCalcAddr = true;
-                    ImGui::SetCursorPos(ImVec2(18, ImGui::GetContentRegionMax().y - 75));
-                    if (ImGui::Button("Terminate Cheats", ImVec2(ImGui::GetContentRegionAvail().x - 10, 50)))
+                    NextItemPadding(40, 40);
+                    ImGui::Checkbox(" Zombie Counter", &bZombieCounter);
+
+                    ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionMax().x - 155, ImGui::GetContentRegionMax().y - 45));
+                    if (ImGui::Button("Terminate Cheats", ImVec2(150, 35)))
                         return 0;
+                    ImGui::SameLine(10);                   
+                    if (ImGui::Button("Recalculate Addresses", ImVec2(200, 35)))
+                        bCalcAddr = true;
                     break;
                 case 1: // ESP
-                    ImGui::Spacing();
+                    ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + 20, ImGui::GetCursorPos().y + 15));
                     ImGui::Checkbox(" Active", &bESP);
-                    ImGui::Spacing();
+                    ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + 20, ImGui::GetCursorPos().y + 20));
+                    ImGui::Text("Options:");
+                    ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + 35, ImGui::GetCursorPos().y + 8));
                     ImGui::Checkbox(" Snaplines", &bSnapLines);
                     break;
                 case 2: // Rapid Fire
+                    ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + 20, ImGui::GetCursorPos().y + 15));
                     ImGui::Checkbox(" Active", &bFireRate);
                     break;
                 case 3: // No Recoil
+                    ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + 20, ImGui::GetCursorPos().y + 15));
                     ImGui::Checkbox(" Active", &bRecoil);
                     break;
-                case 4: // Misc
-                    ImGui::Spacing();
-                    ImGui::Checkbox(" God Mode", &bHealth);
-                    ImGui::Spacing();
-                    ImGui::Checkbox("Unlimited Ammo", &bAmmo);
-      
-                    ImGui::Spacing();
-                    ImGui::SliderInt(" Points amount", &iPoints, 10, 5000);
-                    if (ImGui::Button(" Add Points"))
-                    { 
-                        bPoints = true;
+                case 4: // Misc    
+                    ImGui::BeginChild("##LeftSide", ImVec2(480.0f, ImGui::GetContentRegionAvail().y), false);
+                    {
+                        NextItemPadding(30, 15);
+
+                        // Health
+                        ImGui::Text("Health Hack:");
+                        NextItemPadding(40, 5);
+                        ImGui::BeginChild("##Health Hack", ImVec2(300, 50), false);
+                        {
+                            ImGui::Checkbox(" God Mode", &bHealth);
+                        }
+                        ImGui::EndChild();
+
+                        {
+                            NextItemPadding(30, 5);
+                        }
+
+                        // Ammo
+                        ImGui::Text("Ammo Hack:");
+                        NextItemPadding(40, 5);
+                        ImGui::BeginChild("##Ammo Hack", ImVec2(300, 50), false);
+                        {
+                            ImGui::Checkbox(" Unlimited Ammo", &bAmmo);
+                        }
+                        ImGui::EndChild();
+
+                        {
+                            NextItemPadding(30, 5);
+                        }
+
+                        // Points
+                        ImGui::Text("Points Hack:");
+                        NextItemPadding(40, 5);
+                        ImGui::BeginChild("##Points Hack", ImVec2(358, 90), false);
+                        {
+                            ImGui::Checkbox(" Freeze Points", &bFreezePoints);
+                            NextItemPadding(0, 10);
+                            if (ImGui::Button(" Add", ImVec2(70, 26)))
+                                bPoints = true;                                                       
+                            ImGui::SameLine();
+                            ImGui::SliderInt("Points", &iPoints, 10, 5000);
+                        }
+                        ImGui::EndChild();
+
+                        {
+                            NextItemPadding(30, 5);
+                        }                       
                     }
-                    
+                    ImGui::EndChild();
+
+                    {
+                        ImGui::SameLine();
+                        ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+                        ImGui::SameLine();
+                    }
+
+                    ImGui::BeginChild("##RightSide", ImVec2(500.0f, ImGui::GetContentRegionAvail().y), false);
+                    {
+                        NextItemPadding(30, 15);
+
+                        // Gravity
+                        ImGui::Text("Gravity Hack:");
+                        NextItemPadding(40, 5);
+                        ImGui::BeginChild("##Points Hack", ImVec2(358, 90), false);
+                        {
+                            ImGui::Checkbox(" Enable", &bGravity);
+                            NextItemPadding(0, 5);
+                            ImGui::SliderInt(" Gravity", &iGravity, 10, 2000);
+                        }
+                        ImGui::EndChild();
+
+                        {
+                            NextItemPadding(30, 5);
+                        }
+
+                        // Speed         
+                        ImGui::Text("Speed Hack:");
+                        NextItemPadding(40, 5);
+                        ImGui::BeginChild("##Speed Hack", ImVec2(300, 100), false);
+                        {
+                            ImGui::Checkbox(" Enable", &bSpeedHack);
+                            NextItemPadding(0, 5);
+                            ImGui::SliderInt(" Speed", &iSpeed, 10, 1000);
+                        }
+                        ImGui::EndChild();
+                    }
+                    ImGui::EndChild();
+                                        
                     break;                
                 }
             }

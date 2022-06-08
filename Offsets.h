@@ -36,19 +36,21 @@ public:
 		public:
 			std::vector<unsigned int> name = { 0x5534 };
 
+			std::vector<unsigned int> speed = { 0x94 };
+			std::vector<unsigned int> gravity = { 0x8C };
 			// entity_list + 0x0 + 0x1A8
 			std::vector<unsigned int> health = { 0x0 };
 			std::vector<unsigned int> healthMax = { 0x0 };
 
 			std::vector<unsigned int> points = { 0x55C8 };
 			std::vector<unsigned int> mag1 = { 0x3F0 };
-			std::vector<unsigned int> mag2 = { 0x3F8 };
+			std::vector<unsigned int> mag2 = { 0x3EC };
 			std::vector<unsigned int> ammo1 = { 0x42C };
-			std::vector<unsigned int> ammo2 = { 0x43C };
-			std::vector<unsigned int> ammo3 = { 0x434 };
+			std::vector<unsigned int> ammo2 = { 0x438 };
+			std::vector<unsigned int> ammo3 = { 0x428 };
 			std::vector<unsigned int> ammo4 = { 0x440 };
-			std::vector<unsigned int> ammo5 = { 0x438 };
 			std::vector<unsigned int> grenade1 = { 0x430 };
+			std::vector<unsigned int> grenade2 = { 0x43C };
 
 			std::vector<unsigned int> crosshair = { 0x588 };
 		};

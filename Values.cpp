@@ -14,9 +14,7 @@ namespace Values
 	Vec2 lineOrigin = Vec2(0.0f, -1.0f);
 
 	// Cheat values
-	Matrix ViewMatrix;
-	int entCount = 0;
-	
+	Matrix ViewMatrix;	
 }
 
 namespace Colors

@@ -11,13 +11,23 @@ namespace Options
 	bool bHealth = false;
 	int iHealth = 100;
 
+	// gravity (player)
+	bool bGravity = false;
+	int iGravity = 800; // default
+
+	// speed
+	bool bSpeedHack = false;
+	int iSpeed = 190; // default
+
 	// points
 	bool bPoints = false;
 	int iPoints = 500;
+	bool bFreezePoints = false;
 
 	// ammo
 	bool bAmmo = false;
-	int iAmmo = 1337;
+	int iAmmo = 420;
+	int iGrenade = 3;
 
 	// fire rate
 	bool bFireRate = false;
@@ -28,4 +38,8 @@ namespace Options
 	// ESP
 	bool bESP = false;	
 	bool bSnapLines = false;
+
+	// other
+	bool bZombieCounter = false;
+	int iZombieCount = 0;
 }
