@@ -174,7 +174,9 @@ int main(int, char**)
                     ImGui::TextColored(ImVec4(0,255,0,255), "Call of Duty\xAE: Black Ops II - Zombies");
 
                     NextItemPadding(40, 40);
-                    ImGui::Checkbox(" Zombie Counter", &bZombieCounter);
+                    ImGui::Text("Zombie Count: ");
+                    ImGui::SameLine();
+                    ImGui::Text(std::to_string(iZombieCount).c_str());
 
                     ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionMax().x - 155, ImGui::GetContentRegionMax().y - 45));
                     if (ImGui::Button("Terminate Cheats", ImVec2(150, 35)))

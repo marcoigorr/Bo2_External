@@ -41,6 +41,5 @@ namespace Options
 	extern bool bSnapLines;
 
 	// other
-	extern bool bZombieCounter;
 	extern int iZombieCount;
 }

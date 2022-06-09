@@ -56,31 +56,28 @@ void updateMenu(GLFWwindow* window)
 	}
 
 	// --- ESP 
-	if (bESP || bZombieCounter)
+	ViewMatrix = mem.ReadMem<Matrix>(hProcess, aClientGame + oCG->viewmatrix[0]);
+
+	// Loop Through ent list (fisrt element is player)      
+	iZombieCount = 0;
+	for (short int i = 1; mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C) != 0x0; i++)
 	{
-		ViewMatrix = mem.ReadMem<Matrix>(hProcess, aClientGame + oCG->viewmatrix[0]);
+		entity = mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C);
 
-		// Loop Through ent list (fisrt element is player)      
-		iZombieCount = 0;
-		for (short int i = 1; mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C) != 0x0; i++)
+		// If current ent is not alive restart
+		if (mem.ReadMem<int>(hProcess, entity + oZombie->health[0]) <= 0) continue;
+		iZombieCount++;
+
+		// Snap Lines
+		if (bSnapLines)
 		{
-			entity = mem.ReadMem<uintptr_t>(hProcess, aEntList + i * 0x8C);
+			Vec3 entLocation;
+			entLocation = mem.ReadMem<Vec3>(hProcess, entity + oZombie->vecOrigin[0]);
 
-			// If current ent is not alive restart
-			if (mem.ReadMem<int>(hProcess, entity + oZombie->health[0]) <= 0) continue;
-			iZombieCount++;
+			Vec2 ScreenCoords;
+			if (!WorldToScreen(entLocation, ScreenCoords, ViewMatrix.matrix)) continue;
 
-			// Snap Lines
-			if (bSnapLines)
-			{
-				Vec3 entLocation;
-				entLocation = mem.ReadMem<Vec3>(hProcess, entity + oZombie->vecOrigin[0]);
-
-				Vec2 ScreenCoords;
-				if (!WorldToScreen(entLocation, ScreenCoords, ViewMatrix.matrix)) continue;
-
-				DrawLine(lineOrigin, ScreenCoords);
-			}
+			DrawLine(lineOrigin, ScreenCoords);
 		}
 	}
 
@@ -142,6 +139,9 @@ void updateMenu(GLFWwindow* window)
 	{
 		// 29 B7 A8010000 = sub [edi+000001A8],esi     
 		mem.PatchEx((BYTE*)(aModuleBase + 0x429E69), (BYTE*)("\x29\xB7\xA8\x01\x00\x00"), 6, hProcess);
+
+		//89 81 A8010000 = mov[ecx + 000001A8], eax
+		//mem.PatchEx((BYTE*)(aModuleBase + 0x2872C6), (BYTE*)("\x89\x81\xA8\x01\x00\x00"), 6, hProcess);
 	}
 
 	// --- Speed

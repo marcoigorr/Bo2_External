@@ -40,6 +40,5 @@ namespace Options
 	bool bSnapLines = false;
 
 	// other
-	bool bZombieCounter = false;
 	int iZombieCount = 0;
 }
