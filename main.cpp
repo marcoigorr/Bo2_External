@@ -177,13 +177,12 @@ int main(int, char**)
                     ImGui::Text("Zombie Count: ");
                     ImGui::SameLine();
                     ImGui::Text(std::to_string(iZombieCount).c_str());
+                    NextItemPadding(40, 10);
+                    ImGui::Checkbox("Instant kill", &bInstantKill);
 
                     ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionMax().x - 155, ImGui::GetContentRegionMax().y - 45));
                     if (ImGui::Button("Terminate Cheats", ImVec2(150, 35)))
                         return 0;
-                    ImGui::SameLine(10);                   
-                    if (ImGui::Button("Recalculate Addresses", ImVec2(200, 35)))
-                        bCalcAddr = true;
                     break;
                 case 1: // ESP
                     ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPos().x + 20, ImGui::GetCursorPos().y + 15));

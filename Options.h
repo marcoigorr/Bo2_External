@@ -40,6 +40,7 @@ namespace Options
 	extern bool bESP;
 	extern bool bSnapLines;
 
-	// other
+	// Zombie
 	extern int iZombieCount;
+	extern bool bInstantKill;
 }

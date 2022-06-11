@@ -108,7 +108,4 @@
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="freeglutd.dll" />
-  </ItemGroup>
 </Project>

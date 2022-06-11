@@ -39,12 +39,6 @@ void updateMenu(GLFWwindow* window)
 	
 	GetGameAddr();
 
-	if (bCalcAddr)
-	{
-		bCalcAddr = false;
-		GetGameAddr();
-	}
-
 	// ImGui menu
 	if (bMenu)
 	{
@@ -66,7 +60,14 @@ void updateMenu(GLFWwindow* window)
 
 		// If current ent is not alive restart
 		if (mem.ReadMem<int>(hProcess, entity + oZombie->health[0]) <= 0) continue;
-		iZombieCount++;
+		iZombieCount++;		
+
+		// instant kill
+		if (bInstantKill)
+		{
+			int x = 1;
+			WriteProcessMemory(hProcess, (BYTE*)(entity + oZombie->health[0]), &x, sizeof(x), nullptr);
+		}
 
 		// Snap Lines
 		if (bSnapLines)

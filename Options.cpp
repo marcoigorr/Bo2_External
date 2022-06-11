@@ -39,6 +39,7 @@ namespace Options
 	bool bESP = false;	
 	bool bSnapLines = false;
 
-	// other
+	// Zombie
 	int iZombieCount = 0;
+	bool bInstantKill = false;
 }
