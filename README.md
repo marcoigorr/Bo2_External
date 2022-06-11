@@ -1,19 +1,36 @@
-# ExternalTrainer_t6zm
-Bo2 Renewed (t6zm) C++ External Trainer, Offline version
+# External hack plutonium Bo2
+Plutonium Bo2 Renewed (t6zm) C++ External Hack, use it with Anti Cheat disabled
 
-Offline means this highlighted version, if you want to use the cheats on plutonium version be sure to disable AC
+Use it online at your own risk
 
-![yea this one](https://user-images.githubusercontent.com/87567996/171937257-d7d04ebf-f2be-4edb-afd9-0d6ea62b3859.png)
+
 
 ## How to use
-Simply run _"ExternalTrainer_Bo2.exe"_ when the game is running. 
+Simply run the _".exe"_ provided in the attachments of the desired release at any moment. 
 
-You can either start the cheese when the game is running or when you are in a zombie match.
+## Version 0.2
 
-In case you have opened the program before starting the zombie match, you will not see the correct values in the INFO section of the console, so update the addresses with F10 (or close and then reopen the cheese). 
+ - [**Version 0.2**](https://github.com/marcoigorr/ExternalTrainer_t6zm/releases/tag/v0.2)
+ 
+ Features:
+  - God Mode
+  - Unlimited Ammo
+  - Unlimited Points
+  - Rapid Fire
+  - Recoil (not complete)
+  - ESP
+  - Instant Kill
+  - Speed Hack
+  - Gravity (personal)
+ 
+ See release for more info
 
-## Downloads
+## Version 0.1 (Obsolete)
 - [**Version 0.1**](https://github.com/marcoigorr/ExternalTrainer_t6zm/releases/tag/v0.1)
+
+This release is obsolete and it is not for plutonium version but this one...
+
+![yea this one](https://user-images.githubusercontent.com/87567996/171937257-d7d04ebf-f2be-4edb-afd9-0d6ea62b3859.png)
 
   Features:
   - God Mode
