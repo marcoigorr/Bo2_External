@@ -25,11 +25,17 @@
     <Filter Include="Options">
       <UniqueIdentifier>{9b722f15-7eba-4329-a13b-fe40a78618eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Addr">
-      <UniqueIdentifier>{ce496af0-252b-4246-83c7-22f1c999d05b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="utils">
       <UniqueIdentifier>{58fa1033-2a95-4e10-ade2-3aa571719a97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Values">
+      <UniqueIdentifier>{794216d6-5b37-4e70-b128-2c660b31bd9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Values\Addr">
+      <UniqueIdentifier>{ce496af0-252b-4246-83c7-22f1c999d05b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Values\Offsets">
+      <UniqueIdentifier>{ba7fb0e8-5198-4755-a428-2f8813164aba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -63,20 +69,20 @@
     <ClCompile Include="MemMan.cpp">
       <Filter>mem</Filter>
     </ClCompile>
-    <ClCompile Include="Offsets.cpp">
-      <Filter>Options</Filter>
-    </ClCompile>
     <ClCompile Include="Options.cpp">
       <Filter>Options</Filter>
     </ClCompile>
     <ClCompile Include="Addr.cpp">
-      <Filter>Addr</Filter>
-    </ClCompile>
-    <ClCompile Include="Values.cpp">
-      <Filter>utils</Filter>
+      <Filter>Values\Addr</Filter>
     </ClCompile>
     <ClCompile Include="utils.cpp">
       <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Values.cpp">
+      <Filter>Values</Filter>
+    </ClCompile>
+    <ClCompile Include="Offsets.cpp">
+      <Filter>Values\Offsets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,11 +98,8 @@
     <ClInclude Include="Options.h">
       <Filter>Options</Filter>
     </ClInclude>
-    <ClInclude Include="Offsets.h">
-      <Filter>Options</Filter>
-    </ClInclude>
     <ClInclude Include="Addr.h">
-      <Filter>Addr</Filter>
+      <Filter>Values\Addr</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>utils</Filter>
@@ -104,8 +107,59 @@
     <ClInclude Include="DataTypes.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="include\GL\eglew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GL\glew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GL\glut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GL\glxew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GL\wglew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GLFW\glfw3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GLFW\glfw3native.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imgui_impl_glfw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imgui_impl_opengl3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Values.h">
-      <Filter>utils</Filter>
+      <Filter>Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Offsets.h">
+      <Filter>Values\Offsets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
