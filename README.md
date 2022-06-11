@@ -27,10 +27,7 @@ The Mod menu can be opened with Ins key once the cheat is running (windowed mode
      - Speed Hack
      - Gravity (personal)
  
- See release for more info
- 
- <img src="https://user-images.githubusercontent.com/87567996/173188297-604c7fed-794b-4ded-90e5-9529e751a9ba.JPG" width=50% height=50%>
- 
+ *See release for more info*
 
 ## Version 0.1 (Obsolete)
 - [**Version 0.1**](https://github.com/marcoigorr/ExternalTrainer_t6zm/releases/tag/v0.1)
