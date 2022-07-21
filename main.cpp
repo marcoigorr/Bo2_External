@@ -5,7 +5,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 #include "imgui/imgui_internal.h"
 #include <iostream>
-#include <GLFW/glfw3.h> // sorry rake, next time i will make it with DirectX
+#include <GLFW/glfw3.h>
 #include "proc.h"
 #include "utils.h"
 #include "Options.h"
